@@ -1,0 +1,17 @@
+# Frontend (Next.js)
+/frontend/node_modules
+/frontend/.next
+/frontend/.env.local
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/out
+
+# Backend (Laravel)
+/backend/vendor
+/backend/node_modules
+/backend/.env
+/backend/storage/framework/
+/backend/storage/logs/
+/backend/public/storage
+/backend/public/hot

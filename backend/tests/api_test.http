@@ -1,0 +1,178 @@
+### 1. Register a new user
+POST http://localhost:8000/api/register
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "VS Code User",
+    "username": "vscodeuser",
+    "email": "vscode@example.com",
+    "password": "password123",
+    "password_confirmation": "password123"
+}
+
+### @name loginRequest
+### 2. Login to get a token
+POST http://localhost:8000/api/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "vscode@example.com",
+    "password": "password123"
+}
+
+### Capture the token from the login response
+@token = {{loginRequest.response.body.token}}
+
+### 3. Get user info using the token
+GET http://localhost:8000/api/user
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### ==================================
+###          QUẢN LÝ BÀI VIẾT
+### ==================================
+
+###
+# @name loginRequest
+# Đăng nhập để lấy token trước
+POST http://localhost:8000/api/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "vscode@example.com",
+    "password": "password123"
+}
+
+###
+# Lấy token từ response của request đăng nhập
+@token = {{loginRequest.response.body.token}}
+
+
+###
+# Tạo một bài viết mới (sử dụng token ở trên)
+POST http://localhost:8000/api/posts
+Accept: application/json
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "title": "Bài viết mới bằng REST Client",
+    "content": "Nội dung này được gửi từ VS Code. Thật tuyệt!",
+    "status": 1,
+    "tags": ["testing", "rest-client"]
+}
+
+###
+# Lấy danh sách tất cả bài viết (đã công khai)
+GET http://localhost:8000/api/posts
+Accept: application/json
+
+
+###
+# Lấy chi tiết một bài viết theo ID
+# (Thay số 1 bằng ID của một bài viết có thật)
+GET http://localhost:8000/api/posts/1
+Accept: application/json
+
+
+#### Cập nhật một bài viết (sử dụng token ở trên)
+PUT http://localhost:8000/api/posts/1
+Accept: application/json
+{
+    "title": "Bài đã sửa bằng REST Client",
+    "content": "Nội dung 1",
+    "status": 1,
+    "tags": ["testing", "rest-client"]
+}
+
+
+###
+# Xóa một bài viết (sử dụng token đã lấy)
+# (Thay số 1 bằng ID của một bài viết bạn muốn xóa)
+DELETE http://localhost:8000/api/posts/2
+Accept: application/json
+Authorization: Bearer {{token}}
+
+
+###
+# @name loginRequest
+# Đăng nhập để lấy token trước (nếu cần)
+POST http://localhost:8000/api/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "vscode@example.com",
+    "password": "password123"
+}
+
+###
+# Lấy token từ response của request đăng nhập
+@token = {{loginRequest.response.body.token}}
+
+
+###
+# Sửa một bài viết (sử dụng token ở trên)
+# (Thay số 1 bằng ID của một bài viết bạn muốn sửa)
+PUT http://localhost:8000/api/posts/2
+Accept: application/json
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "title": "Tiêu đề bài viết đã được cập nhật",
+    "content": "Nội dung cũng được cập nhật luôn.",
+    "status": 0
+}
+
+### ==================================
+###          BÌNH LUẬN
+### ==================================
+
+###
+# Thêm bình luận mới vào bài viết có ID = 1
+# (Thay số 1 bằng ID của một bài viết có thật)
+POST http://localhost:8000/api/posts/3/comments
+Accept: application/json
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "content": "Đây là một bình luận khác"
+}
+
+###
+# Trả lời bình luận có ID = 1
+# (Thay số 1 bằng ID của một bình luận có thật)
+POST http://localhost:8000/api/comments/1/replies
+Accept: application/json
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "content": "Tôi đang trả lời bình luận này."
+}
+
+
+### ==================================
+###          TÌM KIẾM
+### ==================================
+
+###
+# Tìm kiếm các bài viết có chứa từ "laravel"
+GET http://localhost:8000/api/search?q=laravel
+Accept: application/json
+
+
+### ==================================
+###      TRANG CÁ NHÂN
+### ==================================
+
+###
+# Lấy thông tin trang cá nhân
+GET http://localhost:8000/api/profile
+Accept: application/json
+Authorization: Bearer {{token}}

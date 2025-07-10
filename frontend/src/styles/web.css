@@ -1,0 +1,38 @@
+/* src/app/globals.css */
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-dark-frame: #2b2738;
+  }
+
+  /* ... (phần body không đổi) ... */
+  .dark body {
+    @apply bg-dark-bg text-slate-300;
+  }
+}
+
+@layer components {
+  /* Style cho các Input, Textarea */
+  .form-input {
+    @apply w-full p-3 bg-slate-700 border border-slate-600 rounded-md text-white
+           focus:outline-none focus:ring-2 focus:ring-accent;
+  }
+
+  /* Style cho các Label */
+  .form-label {
+    @apply block text-slate-300 text-sm font-bold mb-2;
+  }
+  
+  /* Style cho các nút chính */
+  .btn {
+    @apply w-full mt-8 p-3 font-semibold rounded-md transition-colors;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent text-white hover:opacity-90 disabled:bg-slate-600;
+  }
+}

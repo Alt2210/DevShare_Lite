@@ -1,0 +1,42 @@
+// src/types/index.ts
+
+// Định nghĩa cấu trúc cho đối tượng User
+export interface User {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+}
+
+// Định nghĩa cấu trúc cho đối tượng Tag
+export interface Tag {
+  id: number;
+  name: string;
+}
+
+// Định nghĩa cấu trúc cho đối tượng Comment
+export interface Comment {
+  id: number;
+  content: string;
+  user: User;
+  replies?: Comment[]; // Một bình luận có thể có các trả lời (không bắt buộc)
+}
+
+// Định nghĩa cấu trúc cho đối tượng Post
+export interface Post {
+  id: number;
+  title: string;
+  content: string;
+  status: number;
+  user: User;
+  tags: Tag[]; // <-- Đã thay thế any[] bằng Tag[]
+  comments: Comment[]; // <-- Đã thay thế any[] bằng Comment[]
+}
+
+export interface RegisterFormData {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}

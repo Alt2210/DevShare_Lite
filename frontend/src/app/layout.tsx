@@ -6,6 +6,7 @@ import LeftSidebar from '@/components/LeftSidebar';
 import RightSidebar from '@/components/RightSidebar';
 import Header from '@/components/Header';
 import './globals.css';
+import '../styles/web.css';
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
 

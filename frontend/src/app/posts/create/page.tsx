@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
+import '../../styles/web.css';
 
 export default function CreatePost() {
   const { user, loading } = useAuth();
@@ -53,50 +54,50 @@ export default function CreatePost() {
   return (
     <div>
       <h1 className="text-3xl font-bold text-white mb-6">Tạo bài viết mới</h1>
-      <form onSubmit={handleSubmit} className="space-y-6 bg-dark-card p-6 rounded-lg">
-        {error && <p className="text-red-400">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-6 card">
+        {error && <p className="form-error-message">{error}</p>}
         
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium text-slate-300 mb-1">Tiêu đề</label>
+        <div className="form-group">
+          <label htmlFor="title" className="form-label">Tiêu đề</label>
           <input
             type="text"
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full bg-dark-bg p-3 border border-slate-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-accent"
+            className="form-input"
           />
         </div>
 
-        <div>
-          <label htmlFor="content" className="block text-sm font-medium text-slate-300 mb-1">Nội dung (hỗ trợ Markdown)</label>
+        <div className="form-group">
+          <label htmlFor="content" className="form-label">Nội dung (hỗ trợ Markdown)</label>
           <textarea
             id="content"
             rows={10}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
-            className="w-full bg-dark-bg p-3 border border-slate-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-accent"
+            className="form-textarea"
           ></textarea>
         </div>
         
-        <div>
-          <label htmlFor="tags" className="block text-sm font-medium text-slate-300 mb-1">Tags (cách nhau bởi dấu phẩy)</label>
+        <div className="form-group">
+          <label htmlFor="tags" className="form-label">Tags (cách nhau bởi dấu phẩy)</label>
           <input
             type="text"
             id="tags"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="w-full bg-dark-bg p-3 border border-slate-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-accent"
+            className="form-input"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">Trạng thái</label>
+        <div className="form-group">
+          <label className="form-label">Trạng thái</label>
           <select 
             value={status} 
             onChange={(e) => setStatus(Number(e.target.value))}
-            className="w-full bg-dark-bg p-3 border border-slate-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-accent"
+            className="form-select"
           >
             <option value={1}>Công khai (Published)</option>
             <option value={0}>Bản nháp (Draft)</option>
@@ -107,7 +108,7 @@ export default function CreatePost() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-accent hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent disabled:bg-slate-600"
+            className="btn btn-primary w-full"
           >
             {isSubmitting ? 'Đang đăng...' : 'Đăng bài'}
           </button>

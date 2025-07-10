@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import { Post } from '@/types';
 import Link from 'next/link';
+import '../../styles/web.css';
 
 interface ProfileData {
   user: {
@@ -92,13 +93,13 @@ export default function Profile() {
 
   // Component PostItem để tái sử dụng
   const PostItem = ({ post }: { post: Post }) => (
-    <div className="flex justify-between items-center p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+    <div className="card flex justify-between items-center hover:shadow-lg transition-shadow">
       <Link href={`/posts/${post.id}`} className="font-semibold hover:text-blue-600">
         {post.title}
       </Link>
       <div className="space-x-2">
-        <Link href={`/posts/${post.id}/edit`} className="text-sm text-blue-500 hover:underline">Sửa</Link>
-        <button onClick={() => handleDelete(post.id)} className="text-sm text-red-500 hover:underline">
+        <Link href={`/posts/${post.id}/edit`} className="btn-link text-sm">Sửa</Link>
+        <button onClick={() => handleDelete(post.id)} className="btn-link text-sm text-red-500 hover:text-red-600">
           Xóa
         </button>
       </div>
@@ -106,8 +107,8 @@ export default function Profile() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-8">
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+    <div className="container">
+      <div className="card mb-8">
         <h1 className="text-3xl font-bold">{profileData.user.name}</h1>
         <p className="text-lg text-gray-600">@{profileData.user.username}</p>
         <p className="text-gray-500">{profileData.user.email}</p>

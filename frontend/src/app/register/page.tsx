@@ -63,35 +63,35 @@ export default function Register() {
         </Link>
       </p>
 
-      {error && <p className="text-red-400 text-sm text-center mb-4 p-3 bg-red-500/10 rounded-md">{error}</p>}
+      {error && <p className="form-error-card">{error}</p>}
       
       <div className="grid grid-cols-2 gap-4">
-        <div>
+        <div className="form-group">
           <label className="form-label" htmlFor="name">Tên của bạn</label>
-          <input id="name" name="name" type="text" value={formData.name} onChange={handleChange} required className="w-full p-3 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-accent" />
+          <input id="name" name="name" type="text" value={formData.name} onChange={handleChange} required className="form-input" />
         </div>
-        <div>
-          <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="username">Tên đăng nhập</label>
-          <input id="username" name="username" type="text" value={formData.username} onChange={handleChange} required className="w-full p-3 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-accent" />
+        <div className="form-group">
+          <label className="form-label" htmlFor="username">Tên đăng nhập</label>
+          <input id="username" name="username" type="text" value={formData.username} onChange={handleChange} required className="form-input" />
         </div>
       </div>
 
-      <div className="mt-4">
-        <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="email">Email</label>
-        <input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required className="w-full p-3 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-accent" />
+      <div className="form-group mt-4">
+        <label className="form-label" htmlFor="email">Email</label>
+        <input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required className="form-input" />
       </div>
 
-      <div className="mt-4">
-        <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="password">Mật khẩu</label>
-        <input id="password" name="password" type="password" value={formData.password} onChange={handleChange} required className="w-full p-3 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-accent" />
+      <div className="form-group mt-4">
+        <label className="form-label" htmlFor="password">Mật khẩu</label>
+        <input id="password" name="password" type="password" value={formData.password} onChange={handleChange} required className="form-input" />
       </div>
       
-      <div className="mt-4">
-        <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="password_confirmation">Xác nhận mật khẩu</label>
-        <input id="password_confirmation" name="password_confirmation" type="password" value={formData.password_confirmation} onChange={handleChange} required className="w-full p-3 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-accent" />
+      <div className="form-group mt-4">
+        <label className="form-label" htmlFor="password_confirmation">Xác nhận mật khẩu</label>
+        <input id="password_confirmation" name="password_confirmation" type="password" value={formData.password_confirmation} onChange={handleChange} required className="form-input" />
       </div>
       
-      <button type="submit" disabled={isSubmitting} className="w-full mt-8 p-3 bg-accent text-white font-semibold rounded-md hover:opacity-90 transition-colors disabled:bg-slate-600">
+      <button type="submit" disabled={isSubmitting} className="btn btn-primary w-full mt-8">
         {isSubmitting ? 'Đang xử lý...' : 'Tạo tài khoản'}
       </button>
     </form>

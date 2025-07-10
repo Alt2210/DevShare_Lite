@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import api from '@/lib/api';
 import { Comment } from '@/types';
+import '../styles/web.css';
 
 interface CommentFormProps {
   postId: number;
@@ -42,7 +43,6 @@ export default function CommentForm({ postId, parentId, onCommentAdded }: Commen
         onChange={(e) => setContent(e.target.value)}
         placeholder="Viết bình luận của bạn..."
         required
-        // Style cho dark mode
         className="w-full p-3 bg-dark-card border border-slate-700 rounded-md text-slate-300 focus:outline-none focus:ring-2 focus:ring-accent"
       />
       <button

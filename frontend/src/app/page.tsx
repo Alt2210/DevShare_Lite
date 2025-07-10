@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import { Post, Tag } from '@/types'; // Import các type cần thiết
 import Link from 'next/link';
+import '../styles/web.css';
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -31,12 +32,12 @@ export default function Home() {
 
   return (
     // Sử dụng max-w-5xl và mx-auto để căn giữa nội dung và giới hạn chiều rộng
-    <div className="max-w-5xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    <div className="container">
       <header className="text-center mb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+        <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
           Chào mừng đến với DevShare Lite
         </h1>
-        <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+        <p className="mt-4 max-w-2xl mx-auto text-lg text-white">
           Nơi chia sẻ kiến thức và kinh nghiệm cho cộng đồng lập trình viên.
         </p>
       </header>
@@ -44,8 +45,7 @@ export default function Home() {
       {/* Lưới hiển thị các bài viết */}
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
-          // Component card cho mỗi bài viết
-          <Link key={post.id} href={`/posts/${post.id}`} className="block p-6 bg-white rounded-xl shadow-md ring-1 ring-slate-200 hover:shadow-xl hover:ring-slate-300 transition-all duration-300">
+          <Link key={post.id} href={`/posts/${post.id}`} className="block p-6 bg-white dark:bg-white rounded-xl shadow-md ring-1 ring-slate-200 hover:shadow-xl hover:ring-slate-300 transition-all duration-300">
             <div className="flex items-center space-x-4 mb-4">
                {/* Avatar giả */}
               <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-500">

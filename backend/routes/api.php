@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ProfileController;
 
+Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

@@ -62,6 +62,29 @@ body {
   }
 }
 
+main::-webkit-scrollbar {
+  width: 8px; /* Độ rộng của thanh cuộn */
+}
+
+main::-webkit-scrollbar-track {
+  background: transparent; /* Nền của thanh cuộn, để trong suốt */
+}
+
+main::-webkit-scrollbar-thumb {
+  background-color: #25292e; /* Màu của con trượt (màu xám tối) */
+  border-radius: 10px;      /* Bo tròn các góc của con trượt */
+}
+
+main::-webkit-scrollbar-thumb:hover {
+  background-color: #35383e; /* Màu của con trượt khi di chuột vào */
+}
+
+/* Styling cho Firefox */
+main {
+  scrollbar-width: thin;
+  scrollbar-color: #202429 transparent; /* Màu con trượt và màu nền */
+}
+
 h1 {
   font-size: 1.875rem;
   line-height: 2.25rem;

@@ -13,11 +13,18 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/posts', [PostController::class, 'index']);
+Route::get('/posts/popular', [PostController::class, 'popular']);
+Route::get('/trending', [PostController::class, 'trending']);
 Route::get('/posts/{post}', [PostController::class, 'show']);
 
 Route::get('/search', [PostController::class, 'search']);
 
 Route::get('/profiles/{user:username}', [ProfileController::class, 'show']);
+
+Route::get('/popular-skaters', [ProfileController::class, 'popularSkaters']);
+Route::get('/profiles/{user:username}', [ProfileController::class, 'show']);
+
+
 
 
 
@@ -30,7 +37,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/{post}/toggle-like', [PostController::class, 'toggleLike']);
     Route::post('/posts/{post}/toggle-save', [PostController::class, 'toggleSave']);
     Route::get('/profile/saved-posts', [ProfileController::class, 'savedPosts']);
-    Route::get('/trending', [PostController::class, 'trending']);
 
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts/{post}', [PostController::class, 'update']);

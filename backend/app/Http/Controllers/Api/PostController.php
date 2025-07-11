@@ -7,6 +7,8 @@ use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class PostController extends Controller
 {
@@ -175,18 +177,26 @@ class PostController extends Controller
 
         $searchTerm = $request->q;
 
-        // 2. Thực hiện tìm kiếm
+        // 2. Tìm kiếm bài viết (Posts)
         $posts = Post::with(['user:id,name,username', 'tags:id,name'])
             ->where('status', 1) // Chỉ tìm trong các bài đã publish
             ->where(function ($query) use ($searchTerm) {
-                // Tìm kiếm trong cả title và content
                 $query->where('title', 'like', '%' . $searchTerm . '%')
                       ->orWhere('content', 'like', '%' . $searchTerm . '%');
             })
             ->latest()
-            ->paginate(10);
+            ->paginate(5, ['*'], 'posts_page'); // Phân trang cho posts
 
-        return response()->json($posts);
+        // 3. Tìm kiếm người dùng (Users)
+        $users = User::where('name', 'like', '%' . $searchTerm . '%')
+                     ->orWhere('username', 'like', '%' . $searchTerm . '%')
+                     ->paginate(5, ['id', 'name', 'username'], 'users_page'); // Phân trang cho users
+
+        // 4. Trả về kết quả tổng hợp
+        return response()->json([
+            'posts' => $posts,
+            'users' => $users,
+        ]);
     }
 
     public function toggleLike(Request $request, Post $post)
@@ -238,6 +248,27 @@ class PostController extends Controller
             ->orderBy('trending_score', 'desc')
             ->paginate(10);
         
+        return response()->json($posts);
+    }
+
+    public function popular()
+    {
+        $likesSubquery = '(SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.id)';
+        $savesSubquery = '(SELECT COUNT(*) FROM post_saves WHERE post_saves.post_id = posts.id)';
+
+        $posts = Post::select(
+            'posts.id',
+            'posts.title',
+            // Không còn cột 'slug' ở đây
+            DB::raw("$likesSubquery as likes_count"),
+            DB::raw("$savesSubquery as saves_count")
+        )
+        ->where('status', 1) // Chỉ lấy các bài đã published
+        // Sắp xếp trực tiếp bằng công thức để đảm bảo hoạt động trên mọi DB
+        ->orderByRaw("($likesSubquery + $savesSubquery) DESC")
+        ->limit(5)
+        ->get();
+
         return response()->json($posts);
     }
 }

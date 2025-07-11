@@ -135,7 +135,12 @@ export default function PostDetail() {
         </div>
         <h1 className="text-4xl font-extrabold text-white mb-4">{post.title}</h1>
         <div className="text-slate-400 text-sm mb-8">
-          <span>Đăng bởi <strong>{post.user.name}</strong></span>
+          <span>
+          Đăng bởi{' '}
+          <Link href={`/profile/${post.user.username}`} className="font-semibold text-white hover:underline">
+            {post.user.name}
+          </Link>
+          </span>
         </div>
 
         {/* Áp dụng prose và prose-invert để style nội dung Markdown */}

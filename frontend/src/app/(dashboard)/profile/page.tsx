@@ -7,7 +7,6 @@ import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import { Post } from '@/types';
 import Link from 'next/link';
-import '../../styles/web.css';
 
 interface ProfileData {
   user: {

@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
     /**
      * Hiển thị trang cá nhân của người dùng đã xác thực.
      */
-    public function show(Request $request)
+    /*public function show(Request $request)
     {
         // 1. Lấy thông tin người dùng đang đăng nhập
         $user = $request->user();
@@ -41,7 +42,19 @@ class ProfileController extends Controller
             'published_posts' => $publishedPosts,
             'draft_posts' => $draftPosts,
         ]);
+    }*/
+
+    public function show(User $user)
+    {
+        // Tải danh sách các bài viết của người dùng này,
+        // chỉ lấy các bài đã publish (status = 1)
+        $user->load(['posts' => function ($query) {
+            $query->where('status', 1)->with('tags:id,name')->latest();
+        }]);
+
+        return response()->json($user);
     }
+
 
     public function savedPosts(Request $request)
     {

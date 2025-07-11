@@ -17,6 +17,8 @@ Route::get('/posts/{post}', [PostController::class, 'show']);
 
 Route::get('/search', [PostController::class, 'search']);
 
+Route::get('/profiles/{user:username}', [ProfileController::class, 'show']);
+
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -37,5 +39,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
     Route::post('/comments/{comment}/replies', [CommentController::class, 'reply']);
 
-    Route::get('/profile', [ProfileController::class, 'show']);
 });

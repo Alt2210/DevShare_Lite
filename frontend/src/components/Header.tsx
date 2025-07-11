@@ -47,8 +47,8 @@ export default function Header() {
           ) : user ? (
             <>
               <span className="text-gray-700">Chào, {user.name}!</span>
-              <Link href="/profile" className="btn">
-                Trang cá nhân
+              <Link href={`/profile/${user.username}`} className="btn">
+              Trang cá nhân
               </Link>
               <button 
                 onClick={handleLogout} 

@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
         $table->id();
-        $table->string('name')->unique();
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->foreignId('post_id')->constrained()->onDelete('cascade');
+        $table->foreignId('parent_comment_id')->nullable()->constrained('comments')->onDelete('cascade');
+        $table->text('content');
         $table->timestamps();
-        });
+       });
     }
 
     /**

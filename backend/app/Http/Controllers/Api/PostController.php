@@ -71,27 +71,26 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show(Request $request, Post $post)
     {
-        if ($post->status == 0 && auth()->id() !== $post->user_id) {
-            return response()->json(['message' => 'Không tìm thấy bài viết.'], 404);
+        // Kiểm tra bài nháp
+        if ($post->status == 0) {
+            // Chỉ chủ sở hữu hoặc người dùng đã xác thực mới có thể xem
+            if (!$request->user('sanctum') || $request->user('sanctum')->id !== $post->user_id) {
+                return response()->json(['message' => 'Không tìm thấy bài viết.'], 404);
+            }
         }
 
-        // Tải tất cả các mối quan hệ cần thiết một cách tường minh
+        // Tải các mối quan hệ
         $post->load([
             'user:id,name,username',
             'tags:id,name',
-            // Lấy các bình luận gốc và user của chúng
             'comments' => function ($query) {
-                $query->whereNull('parent_comment_id');
-            },
-            'comments.user:id,name,username',
-            // Lấy các bình luận con và user của chúng (đây là phần quan trọng)
-            'comments.replies.user:id,name,username',
-            // Nếu muốn đệ quy sâu hơn nữa (trả lời của trả lời)
-            'comments.replies.replies.user:id,name,username',
+                $query->whereNull('parent_comment_id')->with('user:id,name,username', 'replies');
+            }
         ]);
 
+        // Đếm số lượt thích
         $post->likes_count = $post->likes()->count();
 
         // Kiểm tra xem người dùng hiện tại (nếu có) đã thích hoặc lưu bài viết chưa

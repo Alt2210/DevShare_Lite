@@ -42,4 +42,19 @@ class ProfileController extends Controller
             'draft_posts' => $draftPosts,
         ]);
     }
+
+    public function savedPosts(Request $request)
+    {
+        // Lấy người dùng đã xác thực
+        $user = $request->user();
+
+        // Lấy danh sách bài viết đã lưu qua relationship đã tạo
+        // và phân trang kết quả
+        $savedPosts = $user->savedPosts()
+                        ->with(['user:id,name,username', 'tags:id,name']) // Lấy thêm thông tin user và tags
+                        ->latest() // Sắp xếp theo thứ tự mới nhất
+                        ->paginate(10);
+
+        return response()->json($savedPosts);
+    }
 }

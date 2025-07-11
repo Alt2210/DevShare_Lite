@@ -17,6 +17,8 @@ Route::get('/posts/{post}', [PostController::class, 'show']);
 
 Route::get('/search', [PostController::class, 'search']);
 
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -25,7 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/posts/{post}/toggle-like', [PostController::class, 'toggleLike']);
     Route::post('/posts/{post}/toggle-save', [PostController::class, 'toggleSave']);
-    Route::get('/posts/trending', [PostController::class, 'trending']);
+    Route::get('/profile/saved-posts', [ProfileController::class, 'savedPosts']);
+    Route::get('/trending', [PostController::class, 'trending']);
 
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts/{post}', [PostController::class, 'update']);

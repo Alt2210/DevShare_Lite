@@ -12,7 +12,7 @@ export default function LeftSidebar() {
   return (
     <aside className="w-64 bg-dark-nav p-4 flex-col hidden md:flex">
       <nav className="flex flex-col space-y-2">
-        <p className="px-3 text-xs font-semibold uppercase text-slate-500">Menu</p>
+        <p className="font-bold text-white mb-4">Menu</p>
         <NavItem href="/" icon={Compass} label="Khám phá" />
         <NavItem href="/trending" icon={Star} label="Thịnh hành" />
         

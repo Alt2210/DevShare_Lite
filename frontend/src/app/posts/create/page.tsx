@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
-import '../../styles/web.css';
 
 export default function CreatePost() {
   const { user, loading } = useAuth();

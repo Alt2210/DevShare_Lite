@@ -23,6 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     // Thêm các route cần bảo vệ khác ở đây
 
+    Route::post('/posts/{post}/toggle-like', [PostController::class, 'toggleLike']);
+    Route::post('/posts/{post}/toggle-save', [PostController::class, 'toggleSave']);
+    Route::get('/posts/trending', [PostController::class, 'trending']);
+
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts/{post}', [PostController::class, 'update']);
     Route::delete('/posts/{post}', [PostController::class, 'destroy']);

@@ -176,3 +176,34 @@ Accept: application/json
 GET http://localhost:8000/api/profile
 Accept: application/json
 Authorization: Bearer {{token}}
+
+### 2. Login to get a token
+POST http://localhost:8000/api/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "vscode@example.com",
+    "password": "password123"
+}
+
+###
+### Gửi yêu cầu Like/Unlike cho bài viết có ID = 1
+POST http://localhost:8000/api/posts/1/toggle-like
+Accept: application/json
+# Thay thế YOUR_TOKEN_HERE bằng token bạn nhận được từ yêu cầu đăng nhập ở trên
+Authorization: Bearer 3|cmU13fE7pUqQ3IWQGzhTfz5CxrAhmrqqetBaQ6PX2d428492
+
+###
+# Tạo một bài viết mới (sử dụng token ở trên)
+POST http://localhost:8000/api/posts
+Accept: application/json
+Authorization: Bearer 3|cmU13fE7pUqQ3IWQGzhTfz5CxrAhmrqqetBaQ6PX2d428492
+Content-Type: application/json
+
+{
+    "title": "Bài viết mới bằng REST Client",
+    "content": "Nội dung này được gửi từ VS Code. Thật tuyệt!",
+    "status": 1,
+    "tags": ["testing", "rest-client"]
+}

@@ -72,28 +72,39 @@ class PostController extends Controller
      * Display the specified resource.
      */
     public function show(Post $post)
-{
-    if ($post->status == 0 && auth()->id() !== $post->user_id) {
-        return response()->json(['message' => 'Không tìm thấy bài viết.'], 404);
+    {
+        if ($post->status == 0 && auth()->id() !== $post->user_id) {
+            return response()->json(['message' => 'Không tìm thấy bài viết.'], 404);
+        }
+
+        // Tải tất cả các mối quan hệ cần thiết một cách tường minh
+        $post->load([
+            'user:id,name,username',
+            'tags:id,name',
+            // Lấy các bình luận gốc và user của chúng
+            'comments' => function ($query) {
+                $query->whereNull('parent_comment_id');
+            },
+            'comments.user:id,name,username',
+            // Lấy các bình luận con và user của chúng (đây là phần quan trọng)
+            'comments.replies.user:id,name,username',
+            // Nếu muốn đệ quy sâu hơn nữa (trả lời của trả lời)
+            'comments.replies.replies.user:id,name,username',
+        ]);
+
+        $post->likes_count = $post->likes()->count();
+
+        // Kiểm tra xem người dùng hiện tại (nếu có) đã thích hoặc lưu bài viết chưa
+        if ($user = $request->user('sanctum')) {
+            $post->is_liked_by_user = $post->likes()->where('user_id', $user->id)->exists();
+            $post->is_saved_by_user = $user->savedPosts()->where('post_id', $post->id)->exists();
+        } else {
+            $post->is_liked_by_user = false;
+            $post->is_saved_by_user = false;
+        }
+
+        return response()->json($post);
     }
-
-    // Tải tất cả các mối quan hệ cần thiết một cách tường minh
-    $post->load([
-        'user:id,name,username',
-        'tags:id,name',
-        // Lấy các bình luận gốc và user của chúng
-        'comments' => function ($query) {
-            $query->whereNull('parent_comment_id');
-        },
-        'comments.user:id,name,username',
-        // Lấy các bình luận con và user của chúng (đây là phần quan trọng)
-        'comments.replies.user:id,name,username',
-        // Nếu muốn đệ quy sâu hơn nữa (trả lời của trả lời)
-        'comments.replies.replies.user:id,name,username',
-    ]);
-
-    return response()->json($post);
-}
 
     /**
      * Update the specified resource in storage.
@@ -176,6 +187,58 @@ class PostController extends Controller
             ->latest()
             ->paginate(10);
 
+        return response()->json($posts);
+    }
+
+    public function toggleLike(Request $request, Post $post)
+    {
+        $like = $post->likes()->where('user_id', $request->user()->id)->first();
+
+        if ($like) {
+            $like->delete();
+            return response()->json(['message' => 'Unliked']);
+        } else {
+            $post->likes()->create(['user_id' => $request->user()->id]);
+            return response()->json(['message' => 'Liked']);
+        }
+    }
+
+    public function toggleSave(Request $request, Post $post)
+    {
+        // 'toggle' sẽ tự động thêm hoặc xóa record trong bảng trung gian
+        $request->user()->savedPosts()->toggle($post->id);
+
+        $isSaved = $request->user()->savedPosts()->where('post_id', $post->id)->exists();
+
+        return response()->json([
+            'message' => $isSaved ? 'Saved' : 'Unsaved',
+            'is_saved' => $isSaved
+        ]);
+    }
+
+    public function trending()
+    {
+        $gravity = 1.8;
+
+        $posts = Post::with(['user:id,name,username', 'tags:id,name'])
+            ->select('posts.*')
+            ->selectSub(
+                // Công thức tính điểm
+                sprintf(
+                    '(COUNT(DISTINCT likes.id) * 1 + COUNT(DISTINCT comments.id) * 2 + COUNT(DISTINCT post_saves.id) * 3 - 1) / POW((TIMESTAMPDIFF(HOUR, posts.created_at, NOW()) + 2), %F)',
+                    $gravity
+                ),
+                'trending_score'
+            )
+            ->leftJoin('likes', 'posts.id', '=', 'likes.post_id')
+            ->leftJoin('comments', 'posts.id', '=', 'comments.post_id')
+            ->leftJoin('post_saves', 'posts.id', '=', 'post_saves.post_id')
+            ->where('posts.status', 1)
+            ->where('posts.created_at', '>=', now()->subDays(7)) // Chỉ xét các bài trong 7 ngày gần nhất
+            ->groupBy('posts.id') // Phải group by tất cả các cột của posts
+            ->orderBy('trending_score', 'desc')
+            ->paginate(10);
+        
         return response()->json($posts);
     }
 }

@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import { Post, Tag } from '@/types'; // Import các type cần thiết
 import Link from 'next/link';
-import '../styles/web.css';
+import '@/styles/web.css';
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);

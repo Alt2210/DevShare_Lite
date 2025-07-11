@@ -5,8 +5,8 @@ import { AuthProvider } from '@/context/AuthContext';
 import LeftSidebar from '@/components/LeftSidebar';
 import RightSidebar from '@/components/RightSidebar';
 import Header from '@/components/Header';
+import '@/styles/web.css';
 import './globals.css';
-import '../styles/web.css';
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
 
@@ -31,7 +31,7 @@ export default function RootLayout({
             <div className="min-h-screen flex items-center justify-center bg-dark-bg p-4">
               
               {/* Đây là cái khung/thẻ lớn bao bọc bên ngoài */}
-              <div className="w-full max-w-5xl bg-dark-card p-2 rounded-2xl shadow-2xl">
+              <div className="w-full max-w-5xl bg-gray-900 p-2 rounded-2xl shadow-2xl">
                 
                 {/* Container cho 2 cột bên trong */}
                 <div className="flex rounded-lg overflow-hidden">

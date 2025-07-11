@@ -2,19 +2,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter} from 'next/navigation';
 import api from '@/lib/api';
 import { Post, Tag, Comment as CommentType } from '@/types';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '@/context/AuthContext';
 import CommentForm from '@/components/CommentForm';
 import Link from 'next/link';
+import { Heart, Bookmark } from 'lucide-react';
+
 
 // Component để hiển thị một bình luận và các trả lời của nó
 function CommentItem({ comment, postId }: { comment: CommentType, postId: number }) {
   const { user } = useAuth();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replies, setReplies] = useState(comment.replies || []);
+  
 
   const handleReplyAdded = (newReply: CommentType) => {
     setReplies([...replies, newReply]);
@@ -63,6 +66,10 @@ export default function PostDetail() {
   const { user } = useAuth();
   const params = useParams();
   const { id } = params;
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [isSaved, setIsSaved] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (!id) return;
@@ -70,6 +77,9 @@ export default function PostDetail() {
       try {
         const response = await api.get(`/posts/${id}`);
         setPost(response.data);
+        setLikeCount(response.data.likes_count); 
+        setIsLiked(response.data.is_liked_by_user); 
+        setIsSaved(response.data.is_saved_by_user);
       } catch (err) {
         console.error(err);
       } finally {
@@ -77,7 +87,31 @@ export default function PostDetail() {
       }
     };
     fetchPost();
+     
   }, [id]);
+
+  const handleToggleLike = async () => {
+    if (!user) return router.push('/login');
+    if (!post) return;
+    try {
+      await api.post(`/posts/${post.id}/toggle-like`);
+      setIsLiked(!isLiked);
+      setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+    } catch (error) {
+      console.error("Failed to toggle like", error);
+    }
+  };
+
+  const handleToggleSave = async () => {
+    if (!user) return router.push('/login');
+    if (!post) return;
+    try {
+      const response = await api.post(`/posts/${post.id}/toggle-save`);
+      setIsSaved(response.data.is_saved);
+    } catch (error) {
+      console.error("Failed to toggle save", error);
+    }
+  };
 
   const handleCommentAdded = (newComment: CommentType) => {
     if (post) {
@@ -109,6 +143,17 @@ export default function PostDetail() {
           <ReactMarkdown>{post.content}</ReactMarkdown>
         </div>
       </article>
+
+      <div className="flex items-center space-x-4 mt-8">
+        <button onClick={handleToggleLike} className="flex items-center space-x-2 text-slate-400 hover:text-white">
+          <Heart className={isLiked ? 'text-red-500 fill-current' : ''} />
+          
+        </button>
+        <button onClick={handleToggleSave} className="flex items-center space-x-2 text-slate-400 hover:text-white">
+          <Bookmark className={isSaved ? 'text-yellow-400 fill-current' : ''} />
+          
+        </button>
+      </div>
 
       <section className="mt-12">
         <h2 className="text-2xl font-bold mb-6 text-white">Bình luận ({post.comments.length})</h2>

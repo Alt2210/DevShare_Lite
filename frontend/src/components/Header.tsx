@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react'; // Import useState
-import '../styles/web.css'; // Import your global styles
+import '@/app/globals.css'; 
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
@@ -23,9 +23,9 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-white dark:bg-dark-nav shadow-md">
       <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold text-gray-800">
+        <Link href="/" className="main-logo">
           DevShare Lite
         </Link>
 
@@ -47,24 +47,24 @@ export default function Header() {
           ) : user ? (
             <>
               <span className="text-gray-700">Chào, {user.name}!</span>
-              <Link href="/profile" className="font-medium text-gray-600 hover:text-gray-900">
+              <Link href="/profile" className="btn">
                 Trang cá nhân
               </Link>
               <button 
                 onClick={handleLogout} 
-                className="bg-black text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800"
+                className="btn btn-primary"
               >
                 Đăng xuất
               </button>
             </>
           ) : (
             <>
-              <Link href="/login" className="font-medium text-gray-600 hover:text-gray-900">
+              <Link href="/login" className="btn">
                 Đăng nhập
               </Link>
               <Link 
                 href="/register" 
-                className="bg-black text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800"
+                className="btn btn-primary"
               >
                 Đăng ký
               </Link>

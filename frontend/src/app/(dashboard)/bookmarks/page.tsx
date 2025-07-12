@@ -25,7 +25,7 @@ export default function BookmarksPage() {
   // Lấy dữ liệu
   useEffect(() => {
     if (user) {
-      api.get('/profile/saved-posts')
+      api.get('/bookmarks')
         .then(response => {
           setPosts(response.data.data);
         })
@@ -54,7 +54,7 @@ export default function BookmarksPage() {
       {posts.length > 0 ? (
         <div className="space-y-6">
           {posts.map((post) => (
-            <div key={post.id} className="card">
+            <div key={post.id} className="bg-dark-card p-4 rounded-lg shadow-md">
               <Link href={`/posts/${post.id}`} className="hover:underline">
                 <h2 className="text-xl font-bold text-white">{post.title}</h2>
               </Link>

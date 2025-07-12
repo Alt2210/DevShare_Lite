@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import api from '@/lib/api';
-import { Series, Post } from '@/types';
+import { Series } from '@/types';
 import PostCard from '@/components/PostCard'; // Tái sử dụng PostCard
 
 export default function SeriesDetailPage() {
@@ -57,7 +57,7 @@ export default function SeriesDetailPage() {
 
       {/* Lưới hiển thị các bài viết trong series */}
       {series.posts && series.posts.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-6">
           {series.posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}

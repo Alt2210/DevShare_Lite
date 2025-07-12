@@ -45,7 +45,7 @@ export default function AllSeriesPage() {
       {seriesList.length > 0 ? (
         <div className="space-y-6">
           {seriesList.map((series) => (
-            <div key={series.id} className="card">
+            <div key={series.id} className="bg-dark-card p-6 rounded-lg shadow-lg">
               <Link href={`/series/${series.slug}`} className="hover:underline">
                 <h2 className="text-xl font-bold text-white">{series.title}</h2>
               </Link>

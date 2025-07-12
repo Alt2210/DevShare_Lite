@@ -4,7 +4,6 @@
 import { useState } from 'react';
 import api from '@/lib/api';
 import { Comment } from '@/types';
-import '../styles/web.css';
 
 interface CommentFormProps {
   postId: number;
@@ -36,19 +35,19 @@ export default function CommentForm({ postId, parentId, onCommentAdded }: Commen
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4">
+    <form onSubmit={handleSubmit} className="comment-form">
       <textarea
         rows={3}
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Viết bình luận của bạn..."
         required
-        className="w-full p-3 bg-dark-card border border-slate-700 rounded-md text-slate-300 focus:outline-none focus:ring-2 focus:ring-accent"
+        className="comment-form-textarea"
       />
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mt-2 px-4 py-2 bg-accent text-white font-semibold rounded-md hover:opacity-90 disabled:bg-slate-600"
+        className="btn btn-primary comment-form-submit"
       >
         {isSubmitting ? 'Đang gửi...' : 'Gửi'}
       </button>

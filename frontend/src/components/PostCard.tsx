@@ -8,12 +8,10 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post }: PostCardProps) {
-  // Tạo một đoạn trích ngắn từ nội dung bài viết
-  // Lấy 150 ký tự đầu tiên và thêm "..."
   const snippet = post.content.substring(0, 150) + (post.content.length > 150 ? '...' : '');
 
   return (
-    <div className="card h-full flex flex-col">
+    <div className="h-full flex flex-col bg-dark-card p-6 rounded-lg shadow-lg space-y-4 margin-bottom-6">
       <div className="flex-grow">
         {/* Tiêu đề bài viết */}
         <Link href={`/posts/${post.id}`}>

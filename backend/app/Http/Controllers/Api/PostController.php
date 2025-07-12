@@ -225,7 +225,6 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
-
     public function popular()
     {
         $likesSubquery = '(SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.id)';

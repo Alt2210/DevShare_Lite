@@ -1,4 +1,3 @@
-// frontend/src/components/PopularPosts.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,7 +6,6 @@ import { Heart, Bookmark } from 'lucide-react';
 import api from '@/lib/api';
 import { formatNumber } from '@/lib/utils';
 
-// Sửa lại interface, bỏ slug
 interface PopularPost {
   id: number;
   title: string;
@@ -36,24 +34,24 @@ export default function PopularPosts() {
 
   return (
     <div>
-      <h3 className="font-bold text-white mb-4">Popular Posts</h3>
+      {/* Tái sử dụng lớp CSS tiêu đề đã có */}
+      <h3 className="sidebar-section-title">Popular Posts</h3>
       {loading ? (
-        <p className="text-slate-400">Đang tải...</p>
+        <p className="loading-text">Đang tải...</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="popular-posts-list">
           {posts.map((post) => (
-            <li key={post.id}>
-              {/* Sửa href từ post.slug thành post.id */}
-              <Link href={`/posts/${post.id}`} className="text-slate-300 hover:text-white transition-colors block">
+            <li className="popular-post-item" key={post.id}>
+              <Link href={`/posts/${post.id}`} className="popular-post-link">
                 {post.title}
               </Link>
-              <div className="flex items-center space-x-4 mt-1 text-xs text-slate-400">
-                <div className="flex items-center space-x-1">
-                  <Heart className="w-3.5 h-3.5" />
+              <div className="popular-post-stats">
+                <div className="post-stat">
+                  <Heart className="post-stat-icon" />
                   <span>{formatNumber(post.likes_count)}</span>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <Bookmark className="w-3.5 h-3.5" />
+                <div className="post-stat">
+                  <Bookmark className="post-stat-icon" />
                   <span>{formatNumber(post.saves_count)}</span>
                 </div>
               </div>

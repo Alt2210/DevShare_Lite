@@ -1,4 +1,15 @@
+@import url('@/styles/header.css');
+@import url('@/styles/comment-form.css');
+@import url('@/styles/left-sidebar.css');
+@import url('@/styles/right-sidebar.css');
+@import url('@/styles/home-page.css');
+@import url('@/styles/trending-page.css');
 @import "tailwindcss";
+
+
+/* ==========================================================================
+   BIẾN VÀ CÀI ĐẶT CƠ BẢN (VARIABLES & BASE SETUP)
+   ========================================================================== */
 
 :root {
   --background: #ffffff;
@@ -10,15 +21,16 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-dark-card: var(--darkcard);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
-    --dark-bg: #111827;    
-    --dark-nav: #1f2937;   
-    --dark-card: #374151;  
+    --blackbg: #111827;    
+    --darknav: #1f2937;   
+    --darkcard: #262729;  
     /*--accent: #4f46e5;*/
   }
 }
@@ -29,20 +41,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.form-input-search {
-    background-color: #f3f4f6; 
-    border: 1px solid #d1d5db; 
-    color: #111827; 
-    border-radius: 9999px; 
-    padding: 6px 16px; 
-    width: 100%;
-    outline: none;
-    transition: all 0.2s;
-  }
 
+
+/* ==========================================================================
+   CONTAINER
+   ========================================================================== */
 .container {
-  color: #ffffff;
-  max-width: 80rem;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1rem;
@@ -51,314 +56,312 @@ body {
 
 @media (min-width: 640px) {
   .container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    max-width: 640px;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
   }
 }
 @media (min-width: 1024px) {
   .container {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    max-width: 1024px;
+  }
+}
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
   }
 }
 
-main::-webkit-scrollbar {
-  width: 8px; /* Độ rộng của thanh cuộn */
-}
-
-main::-webkit-scrollbar-track {
-  background: transparent; /* Nền của thanh cuộn, để trong suốt */
-}
-
-main::-webkit-scrollbar-thumb {
-  background-color: #25292e; /* Màu của con trượt (màu xám tối) */
-  border-radius: 10px;      /* Bo tròn các góc của con trượt */
-}
-
-main::-webkit-scrollbar-thumb:hover {
-  background-color: #35383e; /* Màu của con trượt khi di chuột vào */
-}
-
-/* Styling cho Firefox */
-main {
-  scrollbar-width: thin;
-  scrollbar-color: #202429 transparent; /* Màu con trượt và màu nền */
-}
-
+/* ==========================================================================
+   TYPOGRAPHY (CHỮ VIẾT)
+   ========================================================================== */
 h1 {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
+  font-size: 2.25rem; /* 36px */
+  line-height: 2.5rem; /* 40px */
   font-weight: 800;
   letter-spacing: -0.025em;
+  color: #ffffff;
 }
 @media (min-width: 768px) {
   h1 {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
+    font-size: 3rem; /* 48px */
+    line-height: 1;
   }
 }
 
 h2 {
-  font-size: 1.5rem;
-  line-height: 2rem;
+  font-size: 1.5rem; /* 24px */
+  line-height: 2rem; /* 32px */
   font-weight: 700;
+  color: #ffffff;
 }
 
 h3 {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.75rem; /* 28px */
   font-weight: 700;
+  color: #ffffff;
+}
+
+p,
+span,
+div {
+  color: #cbd5e1; /* slate-300 */
 }
 
 a {
   color: var(--accent);
+  text-decoration-line: none;
 }
 a:hover {
   text-decoration-line: underline;
 }
 
-.main-logo {
-    font-size: 1.25rem; 
-    font-weight: 700;
-    color: #111827; 
-    text-decoration: none;
+.mainlogo {
+  font-size: 1.25rem; 
+  line-height: 1.75rem; 
+  font-weight: 700;
+  color: #1f2937; 
+}
+.dark .main-logo {
+  font-size: 1.25rem; 
+  line-height: 1.75rem; 
+  font-weight: 700;
+  color: #d1d5db; 
 }
 
-
+/* ==========================================================================
+   CARD (THẺ)
+   ========================================================================== */
 .card {
   background-color: #ffffff;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  --tw-ring-color: #e2e8f0;
+  border-radius: 0.5rem; /* 8px */
+  padding: 1.5rem; /* 24px */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border: 1px solid #e2e8f0; /* ring-slate-200 */
 }
 .dark .card {
   background-color: var(--dark-card);
-  --tw-ring-color: #475569;
+  border-color: #334155; /* ring-slate-700 */
 }
 
+/* ==========================================================================
+   BUTTON (NÚT)
+   ========================================================================== */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  border-width: 1px;
-  border-color: transparent;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
   font-weight: 600;
-  color: #111827;
-  border-radius: 0.375rem;
-  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
+  border-radius: 0.375rem; /* 6px */
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: color 0.2s, background-color 0.2s;
+  color:#000000
 }
+
+
 .btn:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-ring-offset-width: 2px;
-}
-.dark .btn:focus {
-  --tw-ring-offset-color: var(--dark-bg);
 }
 
 .btn-primary {
-  color: #ffffff;
-  background-color: #000000;
+  color: #000000;
+  background-color: #d4d9e0
 }
 .btn-primary:hover {
-  background-color: #262626;
-}
-.dark .btn-primary:hover {
-  background-color: #3f3f46;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  outline: 2px solid white;
 }
 .btn-primary:focus {
-  --tw-ring-color: #6b7280;
+  box-shadow: 0 0 0 2px var(--dark-bg), 0 0 0 4px var(--accent);
 }
 .btn-primary:disabled {
-  background-color: #4b5563;
+  background-color: #475569; /* slate-600 */
   opacity: 0.75;
 }
 
 .btn-secondary {
-  color: #000000;
-  background-color: #000000;
+  color: #cbd5e1; /* slate-300 */
+  background-color: #334155; /* slate-700 */
 }
 .btn-secondary:hover {
-  background-color: #262626;
-}
-.dark .btn-secondary:hover {
-  background-color: #3f3f46;
+  background-color: #475569; /* slate-600 */
 }
 .btn-secondary:focus {
-  --tw-ring-color: #6b7280;
+  box-shadow: 0 0 0 2px var(--dark-bg), 0 0 0 4px #64748b; /* slate-500 */
 }
 
 .btn-danger {
-  color: #000000;
-  background-color: #000000;
-  border-width: 2px;
-  border-color: var(--danger);
+  color: #ffffff;
+  background-color: var(--danger);
 }
 .btn-danger:hover {
-  background-color: #262626;
-}
-.dark .btn-danger:hover {
-  background-color: #3f3f46;
+  background-color: rgba(239, 68, 68, 0.9);
 }
 .btn-danger:focus {
-  --tw-ring-color: var(--danger);
+  box-shadow: 0 0 0 2px var(--dark-bg), 0 0 0 4px var(--danger);
 }
 
 .btn-link {
   color: var(--accent);
-  background-color: #000000;
   font-weight: 600;
 }
 .btn-link:hover {
-  text-decoration-line: underline;
+  text-decoration: underline;
 }
 
+/* ==========================================================================
+   FORM (BIỂU MẪU)
+   ========================================================================== */
 .form-group {
   margin-bottom: 1rem;
 }
 
 .form-label {
   display: block;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: #334155;
+  color: #334155; /* slate-700 */
 }
 .dark .form-label {
-  color: #cbd5e1;
+  color: #cbd5e1; /* slate-300 */
 }
 
-.form-input {
+.form-input,
+.form-textarea,
+.form-select {
   width: 100%;
-  padding: 0.75rem;
-  background-color: #f1f5f9;
-  border-width: 1px;
-  border-color: #cbd5e1;
-  border-radius: 0.375rem;
-  color: #0f172a;
-  outline: 2px solid transparent;
-  outline-offset: 2px;
+  padding: 0.75rem; /* 12px */
+  background-color: #f1f5f9; /* slate-100 */
+  border: 1px solid #cbd5e1; /* slate-300 */
+  border-radius: 0.375rem; /* 6px */
+  color: #0f172a; /* slate-900 */
 }
-.dark .form-input {
-  background-color: #1e293b;
-  border-color: #475569;
+.dark .form-input,
+.dark .form-textarea,
+.dark .form-select {
+  background-color: #1e293b; /* slate-800 */
+  border-color: #475569; /* slate-600 */
   color: #ffffff;
 }
-.form-input:focus {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  --tw-ring-color: var(--accent);
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--accent);
+  border-color: var(--accent);
 }
 
 .form-input-search {
-  background-color: #f3f4f6;
-  border: 1px solid #d1d5db;
-  color: #111827;
-  border-radius: 9999px;
-  padding: 6px 16px;
-  width: 100%;
-  outline: none;
-  transition: all 0.2s;
+  /* Tăng kích thước và padding */
+  font-size: 1rem; /* 16px */
+  padding: 0.75rem 1rem 0.75rem 2.75rem; /* 12px 16px 12px 44px */
+  border-radius: 9999px; /* Bo tròn tối đa */
+
+  /* Icon kính lúp (SVG làm ảnh nền) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor' class='w-5 h-5'%3E%3Cpath fill-rule='evenodd' d='M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z' clip-rule='evenodd' /%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 0.875rem center; /* Căn vị trí icon */
+  background-size: 1.25rem 1.25rem; /* Kích thước icon */
 }
+
+/* Đổi màu chữ placeholder */
 .form-input-search::placeholder {
-  color: black;
-  opacity: 1;
-}
-.form-input-search:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
-  background-color: white;
+  color: #000000;
+  opacity: 0.6; /* Giảm độ trong suốt một chút cho đẹp hơn */
 }
 
-.form-textarea {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #f1f5f9;
-  border-width: 1px;
-  border-color: #cbd5e1;
-  border-radius: 0.375rem;
-  color: #0f172a;
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-.dark .form-textarea {
-    background-color: #1e293b;
-    border-color: #475569;
-    color: #ffffff;
-}
-.form-textarea:focus {
-    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-    --tw-ring-color: var(--accent);
+.form-input-search:hover {
+  outline: solid 2px var(--blackbg); /* Thêm viền mờ khi hover */
 }
 
-.form-select {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #f1f5f9;
-  border-width: 1px;
-  border-color: #cbd5e1;
-  border-radius: 0.375rem;
-  color: #0f172a;
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-.dark .form-select {
-    background-color: #1e293b;
-    border-color: #475569;
+
+.dark .form-input-search::placeholder {
     color: #ffffff;
+    opacity: 0.7;
 }
-.form-select:focus {
-    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-    --tw-ring-color: var(--accent);
+
+
+.dark .form-input-search {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23FFF' class='w-5 h-5'%3E%3Cpath fill-rule='evenodd' d='M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z' clip-rule='evenodd' /%3E%3C/svg%3E");
 }
 
 .form-error-message {
-  color: #ef4444;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  margin-top: 0.25rem;
+  color: #ef4444; /* red-500 */
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
+  margin-top: 0.25rem; /* 4px */
 }
 .dark .form-error-message {
-  color: #f87171;
+  color: #f87171; /* red-400 */
 }
 
 .form-error-card {
-  color: #f87171;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  color: #f87171; /* red-400 */
+  font-size: 0.875rem; /* 14px */
   text-align: center;
   margin-bottom: 1rem;
-  padding: 0.75rem;
+  padding: 0.75rem; /* 12px */
   background-color: rgba(239, 68, 68, 0.1);
-  border-radius: 0.375rem;
+  border-radius: 0.375rem; /* 6px */
 }
 
+/* ==========================================================================
+   CÁC LỚP TIỆN ÍCH CHUNG (COMMON UTILITY CLASSES)
+   ========================================================================== */
+.text-center {
+  text-align: center;
+}
+.mt-12 {
+  margin-top: 3rem;
+}
+.text-red-500 {
+  color: #ef4444;
+}
+.page-header {
+  margin-bottom: 2.5rem; /* 40px */
+}
+.page-title {
+  font-size: 2.25rem; /* 36px */
+  line-height: 2.5rem; /* 40px */
+  font-weight: 800;
+  color: #ffffff;
+  padding: 1rem;
+}
+@media (min-width: 768px) {
+  .page-title {
+    font-size: 3rem; /* 48px */
+    line-height: 1;
+  }
+}
+.page-description {
+  margin-top: 1rem;
+  max-width: 42rem; /* 672px */
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.75rem; /* 28px */
+  color: #cbd5e1; /* slate-300 */
+  margin-left: auto;
+  margin-right: auto;
+}
 
-
-
+.text{
+  color: #000000
+}
 

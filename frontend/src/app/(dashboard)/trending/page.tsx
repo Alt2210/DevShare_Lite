@@ -25,34 +25,38 @@ export default function TrendingPage() {
   }, []);
 
   if (loading) {
-    return <p className="text-center mt-12">Đang tải...</p>;
+    // Tái sử dụng lớp .loading-text
+    return <p className="loading-text">Đang tải...</p>;
   }
 
   if (error) {
-    return <p className="text-center mt-12 text-red-500">{error}</p>;
+    // Tái sử dụng lớp .error-message
+    return <p className="error-message">{error}</p>;
   }
 
   return (
     <div className="container">
-      <h1 className="text-3xl font-bold text-white mb-6">Bài viết Thịnh hành</h1>
+      {/* TÁI SỬ DỤNG: Lớp .page-title đã có cho tiêu đề trang */}
+      <h1 className="page-title">Bài viết Thịnh hành</h1>
       
       {posts.length > 0 ? (
-        <div className="space-y-6">
+        <div className="trending-posts-list">
           {posts.map((post, index) => (
-            <div key={post.id} className="card flex items-start space-x-4">
-              <div className="text-2xl font-bold text-slate-500">
+            <div key={post.id} className="trending-post-card">
+              <div className="trending-post-rank">
                 {index + 1}
               </div>
-              <div className="flex-1">
-                <Link href={`/posts/${post.id}`} className="hover:underline">
-                  <h2 className="text-xl font-bold text-white">{post.title}</h2>
+              <div className="trending-post-content">
+                <Link href={`/posts/${post.id}`}>
+                  <h2 className="trending-post-title">{post.title}</h2>
                 </Link>
-                <p className="text-sm text-slate-400 mt-1">
+                <p className="trending-post-author">
                   bởi {post.user.name}
                 </p>
-                <div className="flex flex-wrap gap-2 mt-3">
+                {/* TÁI SỬ DỤNG: Các lớp .post-tags-container và .post-tag đã có */}
+                <div className="post-tags-container trending-post-tags">
                   {post.tags.map((tag: Tag) => (
-                    <span key={tag.id} className="bg-accent/10 text-accent text-xs font-medium px-2.5 py-1 rounded-full">
+                    <span key={tag.id} className="post-tag">
                       #{tag.name}
                     </span>
                   ))}
@@ -62,7 +66,7 @@ export default function TrendingPage() {
           ))}
         </div>
       ) : (
-        <p className="text-slate-400">Chưa có bài viết nào thịnh hành.</p>
+        <p className="loading-text">Chưa có bài viết nào thịnh hành.</p>
       )}
     </div>
   );

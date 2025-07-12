@@ -1,4 +1,3 @@
-// frontend/src/components/RightSidebar.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -18,7 +17,6 @@ export default function RightSidebar() {
         setPopularSkaters(response.data);
       } catch (error) {
         console.error("Failed to fetch popular skaters:", error);
-        // Có thể set một giá trị mặc định hoặc hiển thị lỗi
       } finally {
         setLoading(false);
       }
@@ -28,27 +26,25 @@ export default function RightSidebar() {
   }, []);
 
   return (
-    <aside className="w-80 bg-dark-nav p-6 hidden lg:flex flex-col space-y-8">
-      {/* Popular Skaters Section */}
+    <aside className="right-sidebar">
       <div>
-        <h3 className="font-bold text-white mb-4">Popular Skaters</h3>
+        <h3 className="sidebar-section-title">Popular Skaters</h3>
         {loading ? (
-          <p className="text-slate-400">Đang tải...</p>
+          <p className="loading-text">Đang tải...</p>
         ) : (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="popular-skaters-grid">
             {popularSkaters.map((skater) => (
-              <Link href={`/profile/${skater.username}`} key={skater.id} className="flex flex-col items-center space-y-2 group">
-                <div className="w-16 h-16 bg-dark-card rounded-full flex items-center justify-center font-bold text-lg text-white group-hover:ring-2 group-hover:ring-accent transition-all">
+              <Link href={`/profile/${skater.username}`} key={skater.id} className="skater-link">
+                <div className="skater-avatar">
                   {skater.name.charAt(0)}
                 </div>
-                <span className="text-sm text-slate-300 group-hover:text-white transition-colors">{skater.name}</span>
+                <span className="skater-name">{skater.name}</span>
               </Link>
             ))}
           </div>
         )}
       </div>
 
-      {/* Popular Searches Section */}
       <PopularPosts />
 
     </aside>

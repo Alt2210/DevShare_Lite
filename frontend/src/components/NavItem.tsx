@@ -1,4 +1,3 @@
-// src/components/NavItem.tsx
 'use client';
 
 import Link from 'next/link';
@@ -13,19 +12,15 @@ interface NavItemProps {
 
 export default function NavItem({ href, icon: Icon, label }: NavItemProps) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const isActive = pathname === href; 
 
   return (
     <Link
       href={href}
-      className={`flex items-center space-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 ${
-        isActive
-          ? 'bg-accent text-white' // Style khi active
-          : 'text-slate-400 hover:bg-dark-card hover:text-white' // Style mặc định
-      }`}
+      className={`nav-item ${isActive ? 'active' : ''}`}
     >
-      <Icon className="h-5 w-5" />
-      <span>{label}</span>
+      <Icon className="nav-item-icon" />
+      <span className="nav-item-label">{label}</span>
     </Link>
   );
 }

@@ -1,0 +1,61 @@
+/* ==========================================================================
+   TRENDING PAGE (TRANG THỊNH HÀNH) - ĐÃ TỐI ƯU
+   ========================================================================== */
+
+.trending-posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* space-y-6 */
+}
+
+/* Thẻ bài viết trên trang trending */
+.trending-post-card {
+  /* Tái sử dụng nền và bóng đổ từ lớp .feed-post-card */
+  background-color: var(--darkcard);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  
+  /* Layout riêng cho trang trending */
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem; /* Khoảng cách giữa số thứ tự và nội dung */
+}
+
+/* Số thứ tự của bài viết */
+.trending-post-rank {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  color: #64748b; /* text-slate-500 */
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* Phần nội dung chính (tiêu đề, tác giả, tags) */
+.trending-post-content {
+  flex: 1 1 0%;
+}
+
+/* Tiêu đề bài viết */
+.trending-post-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+}
+.trending-post-title:hover {
+    text-decoration: underline;
+}
+
+/* Tên tác giả */
+.trending-post-author {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+}
+
+/* Khoảng cách cho khu vực tags */
+.trending-post-tags {
+    margin-top: 0.75rem;
+}

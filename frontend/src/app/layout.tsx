@@ -5,7 +5,6 @@ import { AuthProvider } from '@/context/AuthContext';
 import LeftSidebar from '@/components/LeftSidebar';
 import RightSidebar from '@/components/RightSidebar';
 import Header from '@/components/Header';
-import '@/styles/web.css';
 import './globals.css';
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
@@ -29,14 +28,8 @@ export default function RootLayout({
         <AuthProvider>
           {isAuthPage ? (
             <div className="min-h-screen flex items-center justify-center bg-dark-bg p-4">
-              
-              {/* Đây là cái khung/thẻ lớn bao bọc bên ngoài */}
               <div className="w-full max-w-5xl bg-gray-900 p-2 rounded-2xl shadow-2xl">
-                
-                {/* Container cho 2 cột bên trong */}
                 <div className="flex rounded-lg overflow-hidden">
-                  
-                  {/* Cột Trái (Trang trí) */}
                   <div className="w-1/2 p-12 text-white hidden md:flex flex-col justify-between bg-accent">
                     <div>
                       <Link href="/" className="text-2xl font-bold">DevShare</Link>
@@ -46,21 +39,18 @@ export default function RootLayout({
                     </div>
                     <p className="text-sm opacity-60">© 2025 DevShare Lite</p>
                   </div>
-                  
-                  {/* Cột Phải (Chứa Form) */}
-                  <div className="w-full md:w-1/2 p-8 md:p-12 flex items-center justify-center bg-dark-nav">
+                  <div className="w-full md:w-2/2 p-8 md:p-12 flex items-center justify-center bg-dark-nav">
                     {children}
                   </div>
                 </div>
-
               </div>
             </div>
           ) : (
             <div className="flex flex-col h-screen bg-dark-bg">
               <Header />
-              <div className="flex flex-1 overflow-hidden"> {}
+              <div className="flex flex-1 overflow-hidden m-4 ">
                 <LeftSidebar />
-                <main className="flex-1 p-6 sm:p-8 overflow-y-auto"> {}
+                <main className="flex-1 p-6 sm:p-8 overflow-y-auto">
                   {children}
                 </main>
                 <RightSidebar />

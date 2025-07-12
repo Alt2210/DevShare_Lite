@@ -1,0 +1,133 @@
+/* ==========================================================================
+   RIGHT SIDEBAR (THANH BÊN PHẢI)
+   ========================================================================== */
+
+.right-sidebar {
+  width: 20rem; /* w-80 */
+  padding: 1.5rem; /* p-6 */
+  display: none; /* hidden */
+  flex-direction: column;
+  /*background-color: var(--darkcard);*/
+  border-radius: 0.5rem; /* rounded-lg */
+}
+
+/* Tạo khoảng cách giữa các section */
+.right-sidebar > * + * {
+    margin-top: 2rem; /* space-y-8 */
+}
+
+/* Hiển thị sidebar trên màn hình lớn (lg) */
+@media (min-width: 1024px) {
+  .right-sidebar {
+    display: flex;
+  }
+}
+
+.sidebar-section-title {
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+.loading-text {
+  color: #9ca3af; /* text-slate-400 */
+}
+
+/* --- Lưới hiển thị Skater nổi bật --- */
+.popular-skaters-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem; /* gap-4 */
+}
+
+.skater-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+}
+
+.skater-link > * + * {
+    margin-top: 0.5rem; /* space-y-2 */
+}
+
+.skater-avatar {
+  height: 4rem; /* h-16 */
+  width: 4rem; /* w-16 */
+  background-color: var(--dark-card);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.125rem; /* text-lg */
+  color: #ffffff;
+  transition: all 0.2s;
+  border: 2px solid white;
+}
+
+/* Hiệu ứng khi hover vào skater-link */
+.skater-link:hover .skater-avatar {
+  border: 4px solid white; 
+}
+
+.skater-name {
+  font-size: 0.875rem; /* text-sm */
+  color: #cbd5e1; /* text-slate-300 */
+  transition: color 0.2s;
+}
+
+.skater-link:hover .skater-name {
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   POPULAR POSTS (BÀI VIẾT NỔI BẬT)
+   ========================================================================== */
+
+.popular-posts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* space-y-3 */
+}
+
+.popular-post-item {
+  /* Không cần style riêng cho thẻ li */
+}
+
+.popular-post-link {
+  color: #cbd5e1; /* text-slate-300 */
+  text-decoration: none;
+  transition: color 0.2s;
+  display: block; /* Để link chiếm toàn bộ chiều rộng */
+  font-weight: 500;
+  word-break: break-word; /* Xử lý tiêu đề dài */
+}
+
+.popular-post-link:hover {
+  color: #ffffff;
+  font-weight: 700;;
+}
+
+.popular-post-stats {
+  display: flex;
+  align-items: center;
+  margin-top: 0.25rem; /* mt-1 */
+  font-size: 0.75rem; /* text-xs */
+  color: #9ca3af; /* text-slate-400 */
+  gap: 1rem; /* space-x-4 */
+}
+
+.post-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; /* space-x-1 */
+}
+
+.post-stat-icon {
+  height: 0.875rem; /* h-3.5 */
+  width: 0.875rem; /* w-3.5 */
+}

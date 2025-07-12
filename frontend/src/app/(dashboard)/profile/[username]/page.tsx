@@ -61,7 +61,7 @@ export default function Profile() {
   return (
     <div>
       {/* Phần header của trang cá nhân */}
-      <div className="card mb-8">
+      <div className="mb-8 bg-dark-card p-6 rounded-lg shadow-lg">
         <div className="text-center">
           <div className="w-24 h-24 bg-accent rounded-full mx-auto mb-4 flex items-center justify-center text-4xl font-bold text-white">
             {profile.name.charAt(0)}

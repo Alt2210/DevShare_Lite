@@ -44,7 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('/posts/{post}/toggle-like', [PostController::class, 'toggleLike']);
     Route::post('/posts/{post}/toggle-save', [PostController::class, 'toggleSave']);
-    Route::get('/profile/saved-posts', [ProfileController::class, 'savedPosts']);
+
+    Route::get('/bookmarks', [ProfileController::class, 'savedPosts']); 
 
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts/{post}', [PostController::class, 'update']);

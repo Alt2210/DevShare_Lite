@@ -30,6 +30,6 @@ class Comment extends Model
     // Lấy các bình luận con (replies)
     public function replies()
     {
-        return $this->hasMany(Comment::class, 'parent_comment_id');
+        return $this->hasMany(Comment::class, 'parent_comment_id')->with('user:id,name,username', 'replies');
     }
 }

@@ -7,8 +7,7 @@ use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\NotificationController;
-
-
+use App\Http\Controllers\Api\SeriesController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -22,8 +21,11 @@ Route::get('/search', [PostController::class, 'search']);
 
 Route::get('/profiles/{user:username}', [ProfileController::class, 'show']);
 
+Route::get('/series', [SeriesController::class, 'publicIndex']);
+Route::get('/series/{series:slug}', [SeriesController::class, 'show']);
+
 Route::get('/popular-skaters', [ProfileController::class, 'popularSkaters']);
-Route::get('/profiles/{user:username}', [ProfileController::class, 'show']);
+Route::get('/profile/{user:username}', [ProfileController::class, 'show']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -32,7 +34,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     // Thêm các route cần bảo vệ khác ở đây
 
+    Route::put('/profile/settings', [ProfileController::class, 'update']);
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
+
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::get('/user/series', [SeriesController::class, 'userIndex']);
+    Route::post('/series', [SeriesController::class, 'store']);
     
     Route::post('/posts/{post}/toggle-like', [PostController::class, 'toggleLike']);
     Route::post('/posts/{post}/toggle-save', [PostController::class, 'toggleSave']);

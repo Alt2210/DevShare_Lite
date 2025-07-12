@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
+import SeriesSelector from '@/components/SeriesSelector';
 
 export default function CreatePost() {
   const { user, loading } = useAuth();
@@ -16,6 +17,7 @@ export default function CreatePost() {
   const [status, setStatus] = useState(1);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [seriesId, setSeriesId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -36,6 +38,7 @@ export default function CreatePost() {
         content,
         status,
         tags: tagsArray,
+        series_id: seriesId,
       });
       router.push(`/posts/${response.data.id}`);
     } catch (err) {
@@ -90,6 +93,8 @@ export default function CreatePost() {
             className="form-input"
           />
         </div>
+
+        <SeriesSelector selectedSeriesId={seriesId} onChange={setSeriesId} />
 
         <div className="form-group">
           <label className="form-label">Trạng thái</label>

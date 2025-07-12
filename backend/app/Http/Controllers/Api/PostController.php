@@ -15,12 +15,8 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-     public function index()
+    public function index()
     {
-        // Lấy các bài viết có status = 1 (published)
-        // Dùng with() để eager loading, tránh lỗi N+1 query
-        // latest() để sắp xếp theo thứ tự mới nhất
-        // paginate() để phân trang
         $posts = Post::with(['user:id,name,username', 'tags:id,name'])
                     ->where('status', 1)
                     ->latest()
@@ -29,73 +25,57 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // 1. Validate dữ liệu
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'status' => 'required|integer|in:0,1', // 0 for draft, 1 for published
-            'tags' => 'sometimes|array', // 'tags' là không bắt buộc, nhưng nếu có phải là một mảng
-            'tags.*' => 'string|max:50' // Mỗi phần tử trong mảng 'tags' phải là một chuỗi
+            'status' => 'required|integer|in:0,1',
+            'tags' => 'sometimes|array',
+            'tags.*' => 'string|max:50',
+            'series_id' => 'nullable|exists:series,id,user_id,' . $request->user()->id,
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        // 2. Tạo bài viết
-        $post = $request->user()->posts()->create([
-            'title' => $request->title,
-            'content' => $request->content,
-            'status' => $request->status,
-        ]);
+        $post = $request->user()->posts()->create($validator->validated());
 
-        // 3. Xử lý Tags
         if ($request->has('tags')) {
             $tagIds = [];
             foreach ($request->tags as $tagName) {
-                // Tìm tag, nếu không có thì tạo mới
                 $tag = Tag::firstOrCreate(['name' => trim($tagName)]);
                 $tagIds[] = $tag->id;
             }
-            // Gắn các tag vào bài viết thông qua bảng trung gian
             $post->tags()->sync($tagIds);
         }
 
-        // 4. Trả về response, kèm theo cả các tags đã được gắn
         return response()->json($post->load('tags'), 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Request $request, Post $post)
     {
-        // Kiểm tra bài nháp
         if ($post->status == 0) {
-            // Chỉ chủ sở hữu hoặc người dùng đã xác thực mới có thể xem
             if (!$request->user('sanctum') || $request->user('sanctum')->id !== $post->user_id) {
                 return response()->json(['message' => 'Không tìm thấy bài viết.'], 404);
             }
         }
 
-        // Tải các mối quan hệ
+        // Đảm bảo các quan hệ quan trọng luôn được tải
         $post->load([
-            'user:id,name,username',
+            'user:id,name,username', // <-- DÒNG QUAN TRỌNG NHẤT
             'tags:id,name',
             'comments' => function ($query) {
                 $query->whereNull('parent_comment_id')->with('user:id,name,username', 'replies');
+            },
+            'series' => function ($query) {
+                $query->with('posts:id,title,series_id')->select('id', 'title', 'slug');
             }
         ]);
 
-        // Đếm số lượt thích
         $post->likes_count = $post->likes()->count();
 
-        // Kiểm tra xem người dùng hiện tại (nếu có) đã thích hoặc lưu bài viết chưa
         if ($user = $request->user('sanctum')) {
             $post->is_liked_by_user = $post->likes()->where('user_id', $user->id)->exists();
             $post->is_saved_by_user = $user->savedPosts()->where('post_id', $post->id)->exists();
@@ -107,33 +87,27 @@ class PostController extends Controller
         return response()->json($post);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Post $post)
     {
-        // 1. Phân quyền: Kiểm tra người dùng có phải là chủ bài viết không
         if ($request->user()->id !== $post->user_id) {
             return response()->json(['message' => 'You do not have right to do this action.'], 403);
         }
 
-        // 2. Validate dữ liệu
         $validator = Validator::make($request->all(), [
             'title' => 'sometimes|required|string|max:255',
             'content' => 'sometimes|required|string',
             'status' => 'sometimes|required|integer|in:0,1',
             'tags' => 'sometimes|array',
-            'tags.*' => 'string|max:50'
+            'tags.*' => 'string|max:50',
+            'series_id' => 'nullable|exists:series,id,user_id,' . $request->user()->id,
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        // 3. Cập nhật bài viết
         $post->update($validator->validated());
 
-        // 4. Cập nhật Tags (nếu có)
         if ($request->has('tags')) {
             $tagIds = [];
             foreach ($request->tags as $tagName) {
@@ -143,8 +117,7 @@ class PostController extends Controller
             $post->tags()->sync($tagIds);
         }
 
-        // 5. Trả về response
-        return response()->json($post->load(['user:id,name,username', 'tags:id,name']));
+        return response()->json($post->load(['user:id,name,username', 'tags:id,name', 'series']));
     }
 
     /**

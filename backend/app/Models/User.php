@@ -84,4 +84,14 @@ class User extends Authenticatable
     {
         return $this->followers()->where('follower_id', $user->id)->exists();
     }
+
+    public function series()
+    {
+        return $this->hasMany(Series::class);
+    }
+
+    public function drafts()
+    {
+        return $this->hasMany(Post::class)->where('status', 0);
+    }
 }

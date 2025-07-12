@@ -2,12 +2,12 @@
 'use client';
 
 import NavItem from './NavItem';
-import { Compass, Star, Clapperboard, Bookmark, Users } from 'lucide-react'; // Thêm Users icon
+import { Compass, Star, Clapperboard, Bookmark, Settings, ListOrdered  } from 'lucide-react'; // Import thêm icon Settings
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 
 export default function LeftSidebar() {
-  const { user } = useAuth(); 
+  const { user } = useAuth();
 
   return (
     <aside className="w-64 bg-dark-nav p-4 flex-col hidden md:flex">
@@ -15,19 +15,20 @@ export default function LeftSidebar() {
         <p className="font-bold text-white mb-4">Menu</p>
         <NavItem href="/" icon={Compass} label="Khám phá" />
         <NavItem href="/trending" icon={Star} label="Thịnh hành" />
+        <NavItem href="/series" icon={ListOrdered} label="Series" />
         
         {user && (
           <>
             <NavItem href="/posts/create" icon={Clapperboard} label="Tạo bài viết" />
             <NavItem href="/bookmarks" icon={Bookmark} label="Đã lưu" />
-            <NavItem href="/following" icon={Users} label="Đang theo dõi" /> {/* Mục mới */}
+            <NavItem href="/settings" icon={Settings} label="Cài đặt" /> 
           </>
         )}
       </nav>
 
       <div className="mt-auto">
         {user ? (
-           <Link href={`/profile/${user.username}`} className="flex items-center space-x-3 p-3 rounded-md hover:bg-dark-card"> {/* Sửa lại link profile */}
+           <Link href={`/profile/${user.username}`} className="flex items-center space-x-3 p-3 rounded-md hover:bg-dark-card">
               <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center font-bold text-white">
                 {user.name.charAt(0)}
               </div>

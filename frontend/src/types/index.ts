@@ -9,6 +9,8 @@ export interface User {
   followers_count?: number;
   following_count?: number;
   is_followed_by_auth_user?: boolean;
+  posts?: Post[];
+  drafts?: Post[];
 }
 
 // Định nghĩa cấu trúc cho đối tượng Tag
@@ -26,14 +28,24 @@ export interface Comment {
 }
 
 // Định nghĩa cấu trúc cho đối tượng Post
+export interface Series {
+  id: number;
+  title: string;
+  slug: string;
+  description?: string;
+  posts?: Post[]; // Danh sách các bài viết khác trong series (không bắt buộc)
+}
+
 export interface Post {
   id: number;
   title: string;
+  slug: string; // Thêm slug để tạo link đẹp hơn
   content: string;
   status: number;
   user: User;
-  tags: Tag[]; // <-- Đã thay thế any[] bằng Tag[]
-  comments: Comment[]; // <-- Đã thay thế any[] bằng Comment[]
+  tags: Tag[];
+  comments: Comment[];
+  series?: Series; // Bài viết có thể thuộc về 1 series (không bắt buộc)
 }
 
 export interface RegisterFormData {

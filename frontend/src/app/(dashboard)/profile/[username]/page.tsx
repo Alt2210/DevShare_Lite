@@ -4,128 +4,136 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import api from '@/lib/api';
-import { Post, Tag, User } from '@/types';
-import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext'; // Import useAuth
+import { User, Post } from '@/types';
+import { useAuth } from '@/context/AuthContext';
+import PostCard from '@/components/PostCard';
 
-// Cập nhật interface
-interface ProfileUser extends User {
-  posts: Post[];
-  followers_count: number;
-  following_count: number;
-  is_followed_by_auth_user: boolean;
-}
-
-export default function UserProfilePage() {
-  const [profile, setProfile] = useState<ProfileUser | null>(null);
+export default function Profile() {
+  const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const { user, loading: authLoading } = useAuth();
   const params = useParams();
   const { username } = params;
-  const { user: authUser } = useAuth(); // Lấy người dùng đang đăng nhập
+
+  // State để quản lý tab đang hoạt động
+  const [activeTab, setActiveTab] = useState<'published' | 'drafts'>('published');
 
   useEffect(() => {
-    if (typeof username === 'string') {
-      api.get(`/profiles/${username}`)
-        .then(response => {
-          setProfile(response.data);
-        })
-        .catch(err => {
-          console.error("Failed to fetch profile", err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [username]);
-  
-  const handleFollowToggle = async () => {
-      if (!authUser || !profile) return;
-      
-      const originalProfile = { ...profile };
-
-      // Cập nhật giao diện trước để tạo cảm giác nhanh
-      setProfile(prev => {
-          if (!prev) return null;
-          const currentFollowers = typeof prev.followers_count === 'number' ? prev.followers_count : 0;
-
-          return {
-              ...prev,
-              is_followed_by_auth_user: !prev.is_followed_by_auth_user,
-              followers_count: prev.is_followed_by_auth_user 
-                                 ? currentFollowers - 1
-                                 : currentFollowers + 1,
-          }
-      });
-
+    if (!username) return;
+    const fetchProfile = async () => {
       try {
-          if (originalProfile.is_followed_by_auth_user) {
-              await api.delete(`/profiles/${profile.username}/unfollow`);
-          } else {
-              await api.post(`/profiles/${profile.username}/follow`);
-          }
-      } catch (error) {
-          console.error("Follow/Unfollow failed", error);
-          // Nếu có lỗi, trả lại trạng thái ban đầu
-          setProfile(originalProfile);
+        const { data } = await api.get(`/profile/${username}`);
+        setProfile(data);
+        setIsFollowing(data.is_followed_by_auth_user);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
+    };
+    fetchProfile();
+  }, [username]);
+
+  const handleToggleFollow = async () => {
+    if (!profile) return;
+    try {
+      await api.post(`/profile/${profile.username}/toggle-follow`);
+      setIsFollowing(!isFollowing);
+      // Cập nhật số lượng followers một cách tương đối
+      if (profile.followers_count !== undefined) {
+        setProfile({
+          ...profile,
+          followers_count: isFollowing ? profile.followers_count - 1 : profile.followers_count + 1,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to toggle follow', error);
+    }
   };
+  
+  if (loading || authLoading) return <p className="text-center mt-12">Đang tải...</p>;
+  if (!profile) return <p className="text-center mt-12 text-red-500">Không tìm thấy người dùng.</p>;
 
-  if (loading) {
-    return <p className="text-center mt-12">Đang tải hồ sơ...</p>;
-  }
-
-  if (!profile) {
-    return <p className="text-center mt-12 text-red-500">Không tìm thấy người dùng.</p>;
-  }
+  // Kiểm tra xem người đang xem có phải là chủ nhân profile không
+  const isOwner = user?.username === profile.username;
 
   return (
-    <div className="container">
-      <div className="mb-8">
-        <div className="flex items-start space-x-6">
-            <div className="w-24 h-24 bg-slate-700 rounded-full flex items-center justify-center text-4xl font-bold text-white mb-4 shrink-0">
-              {profile.name.charAt(0)}
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-white">{profile.name}</h1>
-                    <p className="text-slate-400">@{profile.username}</p>
-                </div>
-                {/* Nút Follow/Unfollow */}
-                {authUser && authUser.id !== profile.id && (
-                    <button onClick={handleFollowToggle}
-                        className={`btn ${profile.is_followed_by_auth_user ? 'btn-primary' : 'btn-primary'}`}>
-                        {profile.is_followed_by_auth_user ? 'Đang theo dõi' : 'Theo dõi'}
-                    </button>
-                )}
-              </div>
-              <div className="flex space-x-4 mt-4 text-slate-300">
-                <span><span className="font-bold text-white">{profile.followers_count ?? 0}</span> Người theo dõi</span>
-                <span><span className="font-bold text-white">{profile.following_count ?? 0}</span> Đang theo dõi</span>
-              </div>
-            </div>
+    <div>
+      {/* Phần header của trang cá nhân */}
+      <div className="card mb-8">
+        <div className="text-center">
+          <div className="w-24 h-24 bg-accent rounded-full mx-auto mb-4 flex items-center justify-center text-4xl font-bold text-white">
+            {profile.name.charAt(0)}
+          </div>
+          <h1 className="text-3xl font-bold text-white">{profile.name}</h1>
+          <p className="text-slate-400">@{profile.username}</p>
+          <div className="flex justify-center space-x-6 mt-4 text-white">
+            <span><span className="font-bold">{profile.posts?.length ?? 0}</span> Bài viết</span>
+            <span><span className="font-bold">{profile.followers_count ?? 0}</span> Người theo dõi</span>
+            <span><span className="font-bold">{profile.following_count ?? 0}</span> Đang theo dõi</span>
+          </div>
+          {!isOwner && user && (
+            <button onClick={handleToggleFollow} className={`mt-6 px-6 py-2 rounded-md font-semibold ${isFollowing ? 'bg-slate-700 text-white' : 'bg-accent text-white'}`}>
+              {isFollowing ? 'Đang theo dõi' : 'Theo dõi'}
+            </button>
+          )}
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold text-white mb-4">Bài viết của {profile.name}</h2>
-      <div className="space-y-6">
-        {profile.posts.length > 0 ? (
-          profile.posts.map(post => (
-            <div key={post.id} className="card">
-              <Link href={`/posts/${post.id}`} className="hover:underline">
-                <h3 className="text-xl font-bold text-white">{post.title}</h3>
-              </Link>
-              <div className="flex flex-wrap gap-2 mt-3">
-                {post.tags.map((tag: Tag) => (
-                  <span key={tag.id} className="bg-accent/10 text-accent text-xs font-medium px-2.5 py-1 rounded-full">
-                    #{tag.name}
-                  </span>
-                ))}
-              </div>
+      {/* Hệ thống TAB */}
+      <div className="border-b border-slate-700 mb-6">
+        <nav className="-mb-px flex space-x-6" aria-label="Tabs">
+          <button
+            onClick={() => setActiveTab('published')}
+            className={`${
+              activeTab === 'published'
+                ? 'border-accent text-accent'
+                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-400'
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+          >
+            Đã xuất bản ({profile.posts?.length ?? 0})
+          </button>
+          
+          {isOwner && profile.drafts && (
+            <button
+              onClick={() => setActiveTab('drafts')}
+              className={`${
+                activeTab === 'drafts'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-400'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            >
+              Bản nháp ({profile.drafts.length})
+            </button>
+          )}
+        </nav>
+      </div>
+
+      {/* Hiển thị danh sách bài viết theo TAB */}
+      <div>
+        {activeTab === 'published' && (
+          profile.posts && profile.posts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {profile.posts.map((post: Post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
             </div>
-          ))
-        ) : (
-          <p className="text-slate-400">Người dùng này chưa có bài viết nào.</p>
+          ) : (
+            <p className="text-slate-400 text-center py-8">Chưa có bài viết nào được xuất bản.</p>
+          )
+        )}
+        
+        {activeTab === 'drafts' && (
+           profile.drafts && profile.drafts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {profile.drafts.map((post: Post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-slate-400 text-center py-8">Không có bản nháp nào.</p>
+          )
         )}
       </div>
     </div>

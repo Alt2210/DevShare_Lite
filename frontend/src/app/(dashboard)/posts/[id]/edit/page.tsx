@@ -6,7 +6,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import { Post } from '@/types';
-import '../../styles/web.css';
+import SeriesSelector from '@/components/SeriesSelector'; // Import component SeriesSelector
 
 export default function EditPost() {
   const { user, loading: authLoading } = useAuth();
@@ -22,7 +22,8 @@ export default function EditPost() {
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
   const [status, setStatus] = useState(1);
-  
+  const [seriesId, setSeriesId] = useState<number | null>(null); // Thêm state cho seriesId
+
   // State điều khiển
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -41,6 +42,7 @@ export default function EditPost() {
         setContent(fetchedPost.content);
         setStatus(fetchedPost.status);
         setTags(fetchedPost.tags.map((tag: any) => tag.name).join(', '));
+        setSeriesId(fetchedPost.series?.id ?? null); // Lấy series_id ban đầu
       } catch (err) {
         setError('Không tìm thấy bài viết.');
       } finally {
@@ -49,14 +51,13 @@ export default function EditPost() {
     };
     fetchPost();
   }, [id]);
-  
+
   // Kiểm tra quyền và chuyển hướng
   useEffect(() => {
     if (!authLoading) {
       if (!user) {
         router.push('/login');
       } else if (post && user.id !== post.user.id) {
-        // Nếu user không phải tác giả, không cho phép sửa
         setError('Bạn không có quyền sửa bài viết này.');
         router.push(`/posts/${id}`);
       }
@@ -76,6 +77,7 @@ export default function EditPost() {
         content,
         status,
         tags: tagsArray,
+        series_id: seriesId, // Gửi series_id khi cập nhật
       });
       router.push(`/posts/${id}`); // Chuyển về trang chi tiết sau khi sửa
     } catch (err) {
@@ -90,7 +92,7 @@ export default function EditPost() {
 
   return (
     <div className="max-w-4xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Sửa bài viết</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white">Sửa bài viết</h1>
       <form onSubmit={handleSubmit} className="space-y-6 card">
         <div className="form-group">
           <label htmlFor="title" className="form-label">Tiêu đề</label>
@@ -104,6 +106,10 @@ export default function EditPost() {
           <label htmlFor="tags" className="form-label">Tags (cách nhau bởi dấu phẩy)</label>
           <input type="text" id="tags" value={tags} onChange={(e) => setTags(e.target.value)} className="form-input"/>
         </div>
+        
+        {/* Thêm component chọn Series */}
+        <SeriesSelector selectedSeriesId={seriesId} onChange={setSeriesId} />
+
         <div className="form-group">
           <label className="form-label">Trạng thái</label>
           <select value={status} onChange={(e) => setStatus(Number(e.target.value))} className="form-select">

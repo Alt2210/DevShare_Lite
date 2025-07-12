@@ -10,6 +10,28 @@ use App\Notifications\NewFollower;
 
 class ProfileController extends Controller
 {
+    public function update(Request $request)
+    {
+        $user = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $user->update($validator->validated());
+
+        return response()->json([
+            'message' => 'Cập nhật thông tin thành công!',
+            'user' => $user
+        ]);
+    }
+    
     /**
      * Hiển thị trang cá nhân của người dùng đã xác thực.
      */
@@ -46,13 +68,37 @@ class ProfileController extends Controller
         ]);
     }*/
 
-    public function show(User $user)
+    public function show(Request $request, User $user)
     {
-        // Tải danh sách các bài viết của người dùng này,
-        // chỉ lấy các bài đã publish (status = 1)
+        // Tải các bài viết đã xuất bản, KÈM THEO user và tags
         $user->load(['posts' => function ($query) {
-            $query->where('status', 1)->with('tags:id,name')->latest();
+            $query->where('status', 1)
+                ->with('user:id,name,username') // <-- DÒNG QUAN TRỌNG
+                ->with('tags:id,name')
+                ->latest();
         }]);
+
+        $authUser = $request->user('sanctum');
+
+        // Nếu là chủ profile, tải thêm các bài nháp, KÈM THEO user và tags
+        if ($authUser && $authUser->id === $user->id) {
+            $user->load(['drafts' => function ($query) {
+                $query->with('user:id,name,username') // <-- DÒNG QUAN TRỌNG
+                    ->with('tags:id,name')
+                    ->latest();
+            }]);
+        }
+
+        // Đếm số người theo dõi và đang theo dõi
+        $user->followers_count = $user->followers()->count();
+        $user->following_count = $user->following()->count();
+
+        // Kiểm tra trạng thái follow
+        if ($authUser) {
+            $user->is_followed_by_auth_user = $user->isFollowedBy($authUser);
+        } else {
+            $user->is_followed_by_auth_user = false;
+        }
 
         return response()->json($user);
     }

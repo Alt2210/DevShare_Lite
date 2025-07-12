@@ -9,7 +9,7 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'content', 'status', 'user_id'];
+    protected $fillable = ['title', 'content', 'status', 'user_id', 'series_id'];
 
     public function user()
     {
@@ -34,5 +34,15 @@ class Post extends Model
     public function saves()
     {
         return $this->belongsToMany(User::class, 'post_saves');
+    }
+
+    public function series()
+    {
+        return $this->belongsTo(Series::class);
+    }
+
+    public function drafts()
+    {
+        return $this->hasMany(Post::class)->where('status', 0);
     }
 }

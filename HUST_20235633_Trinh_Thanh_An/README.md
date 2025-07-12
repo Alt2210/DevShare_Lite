@@ -106,15 +106,21 @@ cp .env.example .env
 # 4. Generate the application key
 php artisan key:generate
 
-# 5. Create the SQLite database file
-touch database/database.sqlite
+# 5. Create the MySQL database link in .env file
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=devshare_lite
+DB_USERNAME=root
+DB_PASSWORD=
 
 # 6. Run database migrations to create the tables
 php artisan migrate
 
 # 7. Start the Laravel development server and related services (queue, vite)
 # This single command will run the server, queue listener, and Vite for asset bundling.
-npm run dev
+php artisan serve
 ```
 
 ### 2. Frontend Setup (Next.js)

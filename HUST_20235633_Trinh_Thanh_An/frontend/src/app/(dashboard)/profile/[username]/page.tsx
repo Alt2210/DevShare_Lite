@@ -14,7 +14,6 @@ export default function Profile() {
   const { user, loading: authLoading } = useAuth();
   const params = useParams();
   const { username } = params;
-
   const [activeTab, setActiveTab] = useState<'published' | 'drafts'>('published');
 
   useEffect(() => {
@@ -49,44 +48,36 @@ export default function Profile() {
     }
   };
   
-  if (loading || authLoading) return <p className="text-center mt-12">Loading...</p>;
-  if (!profile) return <p className="text-center mt-12 text-red-500">Can not find user.</p>;
+  if (loading || authLoading) return <p className="status-message">Loading...</p>;
+  if (!profile) return <p className="status-message status-message--error">Can not find user.</p>;
 
   const isOwner = user?.username === profile.username;
 
   return (
     <div>
-      {}
-      <div className="mb-8 bg-dark-card p-6 rounded-lg shadow-lg">
-        <div className="text-center">
-          <div className="w-24 h-24 bg-accent rounded-full mx-auto mb-4 flex items-center justify-center text-4xl font-bold text-white">
-            {profile.name.charAt(0)}
-          </div>
-          <h1 className="text-3xl font-bold text-white">{profile.name}</h1>
-          <p className="text-slate-400">@{profile.username}</p>
-          <div className="flex justify-center space-x-6 mt-4 text-white">
-            <span><span className="font-bold">{profile.posts?.length ?? 0}</span> Post</span>
-            <span><span className="font-bold">{profile.followers_count ?? 0}</span> Followers</span>
-            <span><span className="font-bold">{profile.following_count ?? 0}</span> Following</span>
-          </div>
-          {!isOwner && user && (
-            <button onClick={handleToggleFollow} className={`mt-6 px-6 py-2 rounded-md font-semibold ${isFollowing ? 'bg-slate-700 text-white' : 'bg-accent text-white'}`}>
-              {isFollowing ? 'Following' : 'Follow'}
-            </button>
-          )}
+      <div className="card profile-header">
+        <div className="profile-avatar">
+          {profile.name.charAt(0)}
         </div>
+        <h1 className="profile-name">{profile.name}</h1>
+        <p className="profile-username">@{profile.username}</p>
+        <div className="profile-stats">
+          <span className="stat-item"><span>{profile.posts?.length ?? 0}</span> Post</span>
+          <span className="stat-item"><span>{profile.followers_count ?? 0}</span> Followers</span>
+          <span className="stat-item"><span>{profile.following_count ?? 0}</span> Following</span>
+        </div>
+        {!isOwner && user && (
+          <button onClick={handleToggleFollow} className={`btn btn-primary btn-follow ${isFollowing ? 'following' : ''}`}>
+            {isFollowing ? 'Following' : 'Follow'}
+          </button>
+        )}
       </div>
 
-      {}
-      <div className="border-b border-slate-700 mb-6">
-        <nav className="-mb-px flex space-x-6" aria-label="Tabs">
+      <div className="tabs-container">
+        <nav className="tabs-nav" aria-label="Tabs">
           <button
             onClick={() => setActiveTab('published')}
-            className={`${
-              activeTab === 'published'
-                ? 'border-accent text-accent'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-400'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            className={`tab-button ${activeTab === 'published' ? 'active' : ''}`}
           >
             Published ({profile.posts?.length ?? 0})
           </button>
@@ -94,11 +85,7 @@ export default function Profile() {
           {isOwner && profile.drafts && (
             <button
               onClick={() => setActiveTab('drafts')}
-              className={`${
-                activeTab === 'drafts'
-                  ? 'border-accent text-accent'
-                  : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-400'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              className={`tab-button ${activeTab === 'drafts' ? 'active' : ''}`}
             >
               Draft ({profile.drafts.length})
             </button>
@@ -106,11 +93,10 @@ export default function Profile() {
         </nav>
       </div>
 
-      {}
       <div>
         {activeTab === 'published' && (
           profile.posts && profile.posts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="posts-grid">
               {profile.posts.map((post: Post) => (
                 <PostCard key={post.id} post={post} />
               ))}
@@ -122,7 +108,7 @@ export default function Profile() {
         
         {activeTab === 'drafts' && (
            profile.drafts && profile.drafts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="posts-grid">
               {profile.drafts.map((post: Post) => (
                 <PostCard key={post.id} post={post} />
               ))}

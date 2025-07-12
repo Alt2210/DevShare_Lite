@@ -25,53 +25,53 @@ export default function Home() {
     fetchPosts();
   }, []);
 
-  if (loading) return <p className="loading-text">Loading...</p>;
-  if (error) return <p className="error-message">{error}</p>;
+  if (loading) return <p className="status-message">Loading...</p>;
+  if (error) return <p className="status-message status-message--error">{error}</p>;
 
   return (
     <div className="container">
-      <header className="home-header">
-        <h1 className="home-title">
+      <header className="page-header">
+        <h1 className="page-title">
           Welcome to DevShare Lite
         </h1>
-        <p className="home-subtitle">
+        <p className="page-subtitle">
           A place to share knowledge and experience for the developer community.
         </p>
       </header>
       
-      <div className="posts-list-container">
+      <div>
         {posts.map((post) => {
           const snippet = post.content.substring(0, 200) + (post.content.length > 200 ? '...' : '');
 
           return (
             <div key={post.id} className="feed-post-card">
-              <div className="post-header">
+              <div className="user-info">
                 <Link href={`/profile/${post.user.username}`}>
-                  <div className="post-avatar">
+                  <div className="user-avatar">
                     {post.user.name.charAt(0)}
                   </div>
                 </Link>
                 <div>
                   <Link href={`/profile/${post.user.username}`}>
-                    <p className="post-author-name">{post.user.name}</p>
+                    <p className="user-name">{post.user.name}</p>
                   </Link>
-                  <p className="post-author-username">@{post.user.username}</p>
+                  <p className="user-username">@{post.user.username}</p>
                 </div>
               </div>
 
-              <div className="post-content-wrapper">
-                <Link href={`/posts/${post.id}`} >
-                  <h2 className="post-title">
+              <div className="feed-post-content">
+                <Link href={`/posts/${post.id}`}>
+                  <h2 className="post-card-title">
                     {post.title}
                   </h2>
                 </Link>
-                <p className="post-snippet">
+                <p className="feed-post-snippet">
                   {snippet}
                 </p>
 
-                <div className="post-tags-container">
+                <div className="tags-container">
                   {post.tags.map((tag: Tag) => (
-                    <span key={tag.id} className="post-tag">
+                    <span key={tag.id} className="tag-badge">
                       #{tag.name}
                     </span>
                   ))}

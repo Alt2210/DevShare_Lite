@@ -29,29 +29,29 @@ export default function AllSeriesPage() {
   }, []);
 
   if (loading) {
-    return <p className="text-center mt-12">Loading series...</p>;
+    return <p className="status-message">Loading series...</p>;
   }
 
   if (error) {
-    return <p className="text-center mt-12 text-red-500">{error}</p>;
+    return <p className="status-message status-message--error">{error}</p>;
   }
 
   return (
     <div className="container">
-      <h1 className="text-3xl font-bold text-white mb-6">Discover Series</h1>
+      <h1 className="page-title">Discover Series</h1>
       
       {seriesList.length > 0 ? (
-        <div className="space-y-6">
+        <div className="series-list">
           {seriesList.map((series) => (
-            <div key={series.id} className="bg-dark-card p-6 rounded-lg shadow-lg">
-              <Link href={`/series/${series.slug}`} className="hover:underline">
-                <h2 className="text-xl font-bold text-white">{series.title}</h2>
+            <div key={series.id} className="card">
+              <Link href={`/series/${series.slug}`} className="link">
+                <h2 className="post-card-title">{series.title}</h2>
               </Link>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="post-meta">
                 by {series.user.name} • {series.posts_count} posts
               </p>
               {series.description && (
-                <p className="text-slate-300 mt-2 text-sm">{series.description}</p>
+                <p className="series-description">{series.description}</p>
               )}
             </div>
           ))}

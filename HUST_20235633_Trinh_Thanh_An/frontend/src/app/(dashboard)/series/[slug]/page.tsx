@@ -30,11 +30,11 @@ export default function SeriesDetailPage() {
   }, [slug]);
 
   if (loading) {
-    return <p className="text-center mt-12">Loading details...</p>;
+    return <p className="status-message">Loading details...</p>;
   }
 
   if (error) {
-    return <p className="text-center mt-12 text-red-500">{error}</p>;
+    return <p className="status-message status-message--error">{error}</p>;
   }
 
   if (!series) {
@@ -43,20 +43,18 @@ export default function SeriesDetailPage() {
 
   return (
     <div className="container">
-      {}
-      <header className="mb-10">
-        <p className="text-accent font-semibold mb-2">Series</p>
-        <h1 className="text-4xl font-extrabold text-white">{series.title}</h1>
+      <header className="page-header">
+        <p className="page-subtitle">Series</p>
+        <h1 className="series-page-title">{series.title}</h1>
         {series.description && (
-          <p className="mt-4 max-w-2xl text-lg text-slate-300">
+          <p className="series-page-description">
             {series.description}
           </p>
         )}
       </header>
 
-      {}
       {series.posts && series.posts.length > 0 ? (
-        <div className="space-y-6">
+        <div className="posts-list">
           {series.posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}

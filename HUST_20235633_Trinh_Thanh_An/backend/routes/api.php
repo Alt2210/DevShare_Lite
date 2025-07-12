@@ -52,10 +52,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/posts/{post}', [PostController::class, 'destroy']);
 
     Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
+
+    Route::put('/comments/{comment}', [CommentController::class, 'update']);
     Route::post('/comments/{comment}/replies', [CommentController::class, 'reply']);
 
-    Route::post('/profiles/{user:username}/follow', [ProfileController::class, 'follow']);
-    Route::delete('/profiles/{user:username}/unfollow', [ProfileController::class, 'unfollow']);
+    Route::post('/profile/{user:username}/toggle-follow', [ProfileController::class, 'toggleFollow']);
     Route::get('/profile/following', [ProfileController::class, 'following']);
     Route::get('/profile/followers', [ProfileController::class, 'followers']);
 

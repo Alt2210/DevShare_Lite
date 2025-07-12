@@ -28,6 +28,25 @@ class CommentController extends Controller
         return response()->json($comment->load('user:id,name,username'), 201);
     }
 
+    public function update(Request $request, Comment $comment)
+    {
+        if ($request->user()->id !== $comment->user_id) {
+            return response()->json(['message' => 'You do not have the right to do this action.'], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'content' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $comment->update($request->only('content'));
+
+        return response()->json($comment->load('user:id,name,username'));
+    }
+
     public function reply(Request $request, Comment $comment)
     {
         $validator = Validator::make($request->all(), [

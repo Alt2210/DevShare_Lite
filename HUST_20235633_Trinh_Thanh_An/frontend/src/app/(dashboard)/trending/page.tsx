@@ -25,20 +25,19 @@ export default function TrendingPage() {
   }, []);
 
   if (loading) {
-    return <p className="loading-text">Loading...</p>;
+    return <p className="status-message">Loading...</p>;
   }
 
   if (error) {
-    return <p className="error-message">{error}</p>;
+    return <p className="status-message status-message--error">{error}</p>;
   }
 
   return (
     <div className="container">
-      {}
-      <h1 className="page-title">Treding Post</h1>
+      <h1 className="page-title">Trending Posts</h1>
       
       {posts.length > 0 ? (
-        <div className="trending-posts-list">
+        <div className="posts-list">
           {posts.map((post, index) => (
             <div key={post.id} className="trending-post-card">
               <div className="trending-post-rank">
@@ -48,13 +47,12 @@ export default function TrendingPage() {
                 <Link href={`/posts/${post.id}`}>
                   <h2 className="trending-post-title">{post.title}</h2>
                 </Link>
-                <p className="trending-post-author">
-                  bởi {post.user.name}
+                <p className="post-meta">
+                  by {post.user.name}
                 </p>
-                {}
-                <div className="post-tags-container trending-post-tags">
+                <div className="tags-container">
                   {post.tags.map((tag: Tag) => (
-                    <span key={tag.id} className="post-tag">
+                    <span key={tag.id} className="tag-badge">
                       #{tag.name}
                     </span>
                   ))}
@@ -64,7 +62,7 @@ export default function TrendingPage() {
           ))}
         </div>
       ) : (
-        <p className="loading-text">No post.</p>
+        <p className="status-message">No trending posts right now.</p>
       )}
     </div>
   );

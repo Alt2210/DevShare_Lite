@@ -10,31 +10,69 @@ import CommentForm from '@/components/CommentForm';
 import Link from 'next/link';
 import { Heart, Bookmark, Pencil } from 'lucide-react';
 
-function CommentItem({ comment, postId }: { comment: CommentType, postId: number }) {
+function CommentItem({ comment, postId, onCommentUpdated }: { comment: CommentType, postId: number, onCommentUpdated: (updatedComment: CommentType) => void }) {
   const { user } = useAuth();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replies, setReplies] = useState(comment.replies || []);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(comment.content);
 
   const handleReplyAdded = (newReply: CommentType) => {
     setReplies([...replies, newReply]);
     setShowReplyForm(false);
   };
 
+  const handleUpdateComment = async () => {
+    if (!editedContent.trim()) return;
+    try {
+      const response = await api.put(`/comments/${comment.id}`, { content: editedContent });
+      onCommentUpdated(response.data);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to update comment", error);
+      alert('Failed to update comment. Please try again.');
+    }
+  };
+
   return (
-    <div className="pl-0">
-      <div className="p-4 bg-dark-card rounded-lg">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center font-bold text-white text-sm">
-            {comment.user.name.charAt(0)}
-          </div>
-          <p className="font-semibold text-white">{comment.user.name}</p>
+    <div className="comment-item">
+      <div className="card">
+        <div className="user-info">
+          <div className="user-avatar">{comment.user.name.charAt(0)}</div>
+          <p className="user-name">{comment.user.name}</p>
         </div>
-        <p className="text-slate-300 whitespace-pre-wrap mt-3">{comment.content}</p>
-        {user && (
-          <button onClick={() => setShowReplyForm(!showReplyForm)} className="text-sm text-accent font-semibold mt-2">
-            {showReplyForm ? 'Cancel' : 'Reply'}
-          </button>
+
+        {isEditing ? (
+          <div className="comment-edit-form">
+            <textarea
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+              className="comment-edit-textarea"
+              rows={3}
+            />
+            <div className="comment-edit-actions">
+              <button onClick={() => setIsEditing(false)} className="btn btn-secondary">Cancel</button>
+              <button onClick={handleUpdateComment} className="btn btn-primary">Save</button>
+            </div>
+          </div>
+        ) : (
+          <div className="comment-content">
+            <ReactMarkdown>{comment.content}</ReactMarkdown>
+          </div>
         )}
+        
+        <div className="comment-actions">
+          {user && (
+            <button onClick={() => setShowReplyForm(!showReplyForm)} className="comment-action-btn text-accent">
+              {showReplyForm ? 'Cancel' : 'Reply'}
+            </button>
+          )}
+          {user && user.id === comment.user_id && !isEditing && (
+            <button onClick={() => setIsEditing(true)} className="comment-action-btn text-slate-400 hover:text-white">
+              Edit
+            </button>
+          )}
+        </div>
       </div>
       {showReplyForm && (
         <div className="pl-12 mt-2">
@@ -42,9 +80,9 @@ function CommentItem({ comment, postId }: { comment: CommentType, postId: number
         </div>
       )}
       {replies?.length > 0 && (
-        <div className="pl-6 mt-4 space-y-4 border-l-2 border-slate-700">
+        <div className="comment-replies">
           {replies.map(reply => (
-            <CommentItem key={reply.id} comment={reply} postId={postId} />
+            <CommentItem key={reply.id} comment={reply} postId={postId} onCommentUpdated={onCommentUpdated} />
           ))}
         </div>
       )}
@@ -113,48 +151,69 @@ export default function PostDetail() {
     }
   };
 
-  if (loading) return <p className="text-center mt-8">Đang tải...</p>;
-  if (!post) return <p className="text-center mt-8 text-red-500">Can not find the post</p>;
+  const handleCommentUpdated = (updatedComment: CommentType) => {
+    if (!post) return;
+    const updateRepliesRecursively = (comments: CommentType[]): CommentType[] => {
+      return comments.map(comment => {
+        if (comment.id === updatedComment.id) {
+          return { ...comment, ...updatedComment };
+        }
+        if (comment.replies && comment.replies.length > 0) {
+          return { ...comment, replies: updateRepliesRecursively(comment.replies) };
+        }
+        return comment;
+      });
+    };
+    setPost(prevPost => {
+        if (!prevPost) return null;
+        return {
+            ...prevPost,
+            comments: updateRepliesRecursively(prevPost.comments || [])
+        }
+    });
+  };
+
+  if (loading) return <p className="status-message">Loading...</p>;
+  if (!post) return <p className="status-message status-message--error">Can not find the post</p>;
 
   return (
     <div>
       <article>
         {post.series && (
-          <div className="mb-4 bg-slate-800/50 p-3 rounded-md">
+          <div className="series-banner">
             <span className="text-slate-400 text-sm">A part of series: </span>
-            <Link href={`/series/${post.series.slug}`} className="text-accent font-bold hover:underline text-sm">
+            <Link href={`/series/${post.series.slug}`} className="link text-sm">
               {post.series.title}
             </Link>
           </div>
         )}
 
-        <div className="mb-4">
-          {}
+        <div className="tags-container">
           {post.tags?.map((tag: Tag) => (
-            <span key={tag.id} className="text-accent font-semibold text-sm mr-2">#{tag.name}</span>
+            <span key={tag.id} className="tag-badge">#{tag.name}</span>
           ))}
         </div>
-        <h1 className="text-4xl font-extrabold text-white mb-4">{post.title}</h1>
-        <div className="text-slate-400 text-sm mb-8">
-          <span>Posted by{' '}<Link href={`/profile/${post.user.username}`} className="font-semibold text-white hover:underline">{post.user.name}</Link></span>
+        <h1 className="page-title">{post.title}</h1>
+        <div className="post-meta">
+          <span>Posted by{' '}<Link href={`/profile/${post.user.username}`} className="link text-white">{post.user.name}</Link></span>
         </div>
-        <div className="prose prose-invert max-w-none prose-p:text-slate-300 prose-headings:text-white prose-strong:text-white prose-a:text-accent">
+        <div className="post-content">
           <ReactMarkdown>{post.content}</ReactMarkdown>
         </div>
       </article>
 
-      <div className="flex items-center space-x-6 mt-8">
-        <button onClick={handleToggleLike} className="flex items-center space-x-2 text-slate-400 hover:text-white">
-          <Heart className={isLiked ? 'text-red-500 fill-current' : ''} />
+      <div className="post-actions">
+        <button onClick={handleToggleLike} className={`icon-button ${isLiked ? 'active-like' : ''}`}>
+          <Heart />
           <span>{likeCount} Like</span>
         </button>
-        <button onClick={handleToggleSave} className="flex items-center space-x-2 text-slate-400 hover:text-white">
-          <Bookmark className={isSaved ? 'text-yellow-400 fill-current' : ''} />
+        <button onClick={handleToggleSave} className={`icon-button ${isSaved ? 'active-save' : ''}`}>
+          <Bookmark />
           <span>{isSaved ? 'Saved' : 'Save'}</span>
         </button>
         {user && user.id === post.user.id && (
-          <Link href={`/posts/${post.id}/edit`} className="flex items-center space-x-2 text-slate-400 hover:text-white">
-            <Pencil className="w-5 h-5" />
+          <Link href={`/posts/${post.id}/edit`} className="icon-button">
+            <Pencil />
             <span>Edit</span>
           </Link>
         )}
@@ -176,14 +235,12 @@ export default function PostDetail() {
         </aside>
       )}
 
-      <section className="mt-12">
-        {/* Thêm "?." để kiểm tra `comments` có tồn tại không */}
-        <h2 className="text-2xl font-bold mb-6 text-white">Bình luận ({post.comments?.length ?? 0})</h2>
-        {user ? <CommentForm postId={post.id} onCommentAdded={handleCommentAdded} /> : <p className="text-slate-400">Vui lòng <Link href="/login" className="text-accent font-semibold">đăng nhập</Link> để bình luận.</p>}
-        <div className="space-y-6 mt-8">
-          {/* Thêm "?." để kiểm tra `comments` có tồn tại không */}
+      <section className="comments-section">
+        <h2 className="section-title">Bình luận ({post.comments?.length ?? 0})</h2>
+        {user ? <CommentForm postId={post.id} onCommentAdded={handleCommentAdded} /> : <p className="text-slate-400">Vui lòng <Link href="/login" className="link">đăng nhập</Link> để bình luận.</p>}
+        <div className="comments-list">
           {post.comments?.map((comment) => (
-            <CommentItem key={comment.id} comment={comment} postId={post.id} />
+            <CommentItem key={comment.id} comment={comment} postId={post.id} onCommentUpdated={handleCommentUpdated} />
           ))}
         </div>
       </section>

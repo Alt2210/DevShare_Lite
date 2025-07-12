@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -38,30 +37,30 @@ export default function BookmarksPage() {
   }, [user]);
 
   if (loading || authLoading) {
-    return <p className="text-center mt-12">Loading...</p>;
+    return <p className="status-message">Loading...</p>;
   }
 
   if (error) {
-    return <p className="text-center mt-12 text-red-500">{error}</p>;
+    return <p className="status-message status-message--error">{error}</p>;
   }
 
   return (
     <div className="container">
-      <h1 className="text-3xl font-bold text-white mb-6">Bookmarks</h1>
+      <h1 className="page-title">Bookmarks</h1>
       
       {posts.length > 0 ? (
-        <div className="space-y-6">
+        <div className="posts-list">
           {posts.map((post) => (
-            <div key={post.id} className="bg-dark-card p-4 rounded-lg shadow-md">
-              <Link href={`/posts/${post.id}`} className="hover:underline">
-                <h2 className="text-xl font-bold text-white">{post.title}</h2>
+            <div key={post.id} className="card">
+              <Link href={`/posts/${post.id}`}>
+                <h2 className="post-card-title">{post.title}</h2>
               </Link>
-              <p className="text-sm text-slate-400 mt-1">
-                bởi {post.user.name}
+              <p className="post-meta">
+                by {post.user.name}
               </p>
-              <div className="flex flex-wrap gap-2 mt-3">
+              <div className="tags-container">
                 {post.tags.map((tag: Tag) => (
-                  <span key={tag.id} className="bg-accent/10 text-accent text-xs font-medium px-2.5 py-1 rounded-full">
+                  <span key={tag.id} className="tag-badge">
                     #{tag.name}
                   </span>
                 ))}

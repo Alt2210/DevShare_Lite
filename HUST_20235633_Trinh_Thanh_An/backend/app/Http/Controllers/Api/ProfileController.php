@@ -37,30 +37,26 @@ class ProfileController extends Controller
 
     public function show(Request $request, User $user)
     {
-        // Tải các bài viết đã xuất bản, KÈM THEO user và tags
         $user->load(['posts' => function ($query) {
             $query->where('status', 1)
-                ->with('user:id,name,username') // <-- DÒNG QUAN TRỌNG
+                ->with('user:id,name,username') 
                 ->with('tags:id,name')
                 ->latest();
         }]);
 
         $authUser = $request->user('sanctum');
 
-        // Nếu là chủ profile, tải thêm các bài nháp, KÈM THEO user và tags
         if ($authUser && $authUser->id === $user->id) {
             $user->load(['drafts' => function ($query) {
-                $query->with('user:id,name,username') // <-- DÒNG QUAN TRỌNG
+                $query->with('user:id,name,username') 
                     ->with('tags:id,name')
                     ->latest();
             }]);
         }
 
-        // Đếm số người theo dõi và đang theo dõi
         $user->followers_count = $user->followers()->count();
         $user->following_count = $user->following()->count();
 
-        // Kiểm tra trạng thái follow
         if ($authUser) {
             $user->is_followed_by_auth_user = $user->isFollowedBy($authUser);
         } else {
@@ -180,4 +176,26 @@ class ProfileController extends Controller
         $user = $request->user();
         return response()->json($user->following()->paginate(15));
     }
+
+    public function toggleFollow(Request $request, User $user)
+{
+    $follower = $request->user();
+
+    if ($follower->id === $user->id) {
+        return response()->json(['message' => 'You can not follow yourself'], 422);
+    }
+
+    $isFollowing = $follower->following()->where('user_id', $user->id)->exists();
+
+    if ($isFollowing) {
+        $follower->following()->detach($user->id);
+        $message = 'Successfully unfollowed.';
+    } else {
+        $follower->following()->attach($user->id);
+        $user->notify(new NewFollower($follower));
+        $message = 'Successfully followed.';
+    }
+
+    return response()->json(['message' => $message]);
+}
 }

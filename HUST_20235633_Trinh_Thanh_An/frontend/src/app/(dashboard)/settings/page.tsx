@@ -26,7 +26,6 @@ export default function SettingsPage() {
   const [isSubmittingInfo, setIsSubmittingInfo] = useState(false);
   const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
 
-
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login');
@@ -93,25 +92,24 @@ export default function SettingsPage() {
   };
 
   if (authLoading || !user) {
-    return <p className="text-center mt-8">Loading...</p>;
+    return <p className="status-message">Loading...</p>;
   }
 
   return (
-    <div className="container max-w-4xl">
-      <h1 className="text-3xl font-bold text-white mb-8">Settings</h1>
+    <div className="page-container">
+      <h1 className="page-title">Settings</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {}
+      <div className="settings-grid">
         <div className="card">
-          <h2 className="text-xl font-bold text-white mb-4">User information</h2>
-          {infoMessage && <p className="mb-4 text-center text-sm text-green-400 bg-green-500/10 p-3 rounded-md">{infoMessage}</p>}
-          {infoError && <p className="form-error-card">{infoError}</p>}
-          <form onSubmit={handleInfoSubmit} className="space-y-4">
+          <h2 className="section-title">User information</h2>
+          {infoMessage && <p className="form-message-card form-message-card--success">{infoMessage}</p>}
+          {infoError && <p className="form-message-card form-message-card--error">{infoError}</p>}
+          <form onSubmit={handleInfoSubmit} className="form-container">
             <div className="form-group">
               <label htmlFor="name" className="form-label">Name</label>
               <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required className="form-input"/>
             </div>
-             <div className="form-group">
+            <div className="form-group">
               <label htmlFor="username" className="form-label">Username</label>
               <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} required className="form-input"/>
             </div>
@@ -119,18 +117,17 @@ export default function SettingsPage() {
               <label htmlFor="email" className="form-label">Email</label>
               <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="form-input"/>
             </div>
-            <button type="submit" disabled={isSubmittingInfo} className="btn btn-primary w-full">
+            <button type="submit" disabled={isSubmittingInfo} className="btn btn-primary btn-full">
               {isSubmittingInfo ? 'Saving...' : 'Save Changes'}
             </button>
           </form>
         </div>
 
-        {}
         <div className="card">
-          <h2 className="text-xl font-bold text-white mb-4">Change password</h2>
-           {passwordMessage && <p className="mb-4 text-center text-sm text-green-400 bg-green-500/10 p-3 rounded-md">{passwordMessage}</p>}
-          {passwordError && <p className="form-error-card">{passwordError}</p>}
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
+          <h2 className="section-title">Change password</h2>
+          {passwordMessage && <p className="form-message-card form-message-card--success">{passwordMessage}</p>}
+          {passwordError && <p className="form-message-card form-message-card--error">{passwordError}</p>}
+          <form onSubmit={handlePasswordSubmit} className="form-container">
             <div className="form-group">
               <label htmlFor="current_password" className="form-label">Current password</label>
               <input type="password" id="current_password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required className="form-input"/>
@@ -143,8 +140,8 @@ export default function SettingsPage() {
               <label htmlFor="new_password_confirmation" className="form-label">Confirm new password</label>
               <input type="password" id="new_password_confirmation" value={newPasswordConfirmation} onChange={(e) => setNewPasswordConfirmation(e.target.value)} required className="form-input"/>
             </div>
-            <button type="submit" disabled={isSubmittingPassword} className="btn btn-primary w-full">
-               {isSubmittingPassword ? 'Saving...' : 'Save Password'}
+            <button type="submit" disabled={isSubmittingPassword} className="btn btn-primary btn-full">
+              {isSubmittingPassword ? 'Saving...' : 'Save Password'}
             </button>
           </form>
         </div>

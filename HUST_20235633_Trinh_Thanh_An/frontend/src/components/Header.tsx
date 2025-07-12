@@ -60,7 +60,7 @@ export default function Header() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm kiếm bài viết..."
+              placeholder="Search..."
               className="form-input form-input-search"
             />
           </form>

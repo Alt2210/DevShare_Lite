@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\NewFollower;
 
 class ProfileController extends Controller
 {
@@ -74,15 +75,15 @@ class ProfileController extends Controller
 
     public function popularSkaters()
     {
-        $gravity = 1.8; // Trọng số thời gian
+        $gravity = 1.8;
 
-        // Bước 1: Tạo một subquery để tính điểm trending cho MỖI bài viết
         $postScores = DB::table('posts')
             ->select(
                 'posts.user_id',
                 DB::raw(
                     sprintf(
-                        '((COUNT(DISTINCT likes.id) * 1 + COUNT(DISTINCT comments.id) * 2 + COUNT(DISTINCT post_saves.id) * 3 - 1) / POW((TIMESTAMPDIFF(HOUR, posts.created_at, NOW()) + 2), %F)) as score',
+                        // Sử dụng công thức tính toán an toàn hơn
+                        '((COUNT(DISTINCT likes.id) * 1 + COUNT(DISTINCT comments.id) * 2 + COUNT(DISTINCT post_saves.id) * 3 - 1) / POW(((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(posts.created_at)) / 3600) + 2, %F)) as score',
                         $gravity
                     )
                 )
@@ -91,10 +92,10 @@ class ProfileController extends Controller
             ->leftJoin('comments', 'posts.id', '=', 'comments.post_id')
             ->leftJoin('post_saves', 'posts.id', '=', 'post_saves.post_id')
             ->where('posts.status', 1)
+            ->whereNotNull('posts.created_at') // Thêm điều kiện này
             ->where('posts.created_at', '>=', now()->subDays(30))
             ->groupBy('posts.id', 'posts.user_id', 'posts.created_at');
 
-        // Bước 2: Join bảng users với subquery ở trên để tính tổng điểm cho mỗi user
         $popularUsers = DB::table('users')
             ->select(
                 'users.id',
@@ -107,10 +108,55 @@ class ProfileController extends Controller
             })
             ->groupBy('users.id', 'users.name', 'users.username')
             ->orderByDesc('total_trending_score')
-            ->havingRaw('total_trending_score > 0') // Chỉ lấy user có điểm > 0
+            ->havingRaw('total_trending_score > 0') 
             ->limit(6)
             ->get();
 
         return response()->json($popularUsers);
+    }
+
+    /**
+     * Theo dõi một người dùng.
+     */
+    public function follow(Request $request, User $user)
+    {
+        $follower = $request->user();
+
+        if ($follower->id === $user->id) {
+            return response()->json(['message' => 'Bạn không thể tự theo dõi chính mình.'], 422);
+        }
+        $follower->following()->syncWithoutDetaching($user->id);
+
+        $user->notify(new NewFollower($follower));
+
+        return response()->json(['message' => 'Đã theo dõi thành công.']);
+    }
+
+    /**
+     * Bỏ theo dõi một người dùng.
+     */
+    public function unfollow(Request $request, User $user)
+    {
+        $follower = $request->user();
+        $follower->following()->detach($user->id);
+        return response()->json(['message' => 'Đã bỏ theo dõi.']);
+    }
+
+    /**
+     * Lấy danh sách những người đang theo dõi người dùng đã xác thực.
+     */
+    public function followers(Request $request)
+    {
+        $user = $request->user();
+        return response()->json($user->followers()->paginate(15));
+    }
+
+    /**
+     * Lấy danh sách những người mà người dùng đã xác thực đang theo dõi.
+     */
+    public function following(Request $request)
+    {
+        $user = $request->user();
+        return response()->json($user->following()->paginate(15));
     }
 }

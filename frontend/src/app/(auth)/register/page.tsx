@@ -6,7 +6,6 @@ import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { RegisterFormData } from '@/types';
 import { isAxiosError } from 'axios';
-import '../../styles/web.css'; // Import your global styles
 
 export default function Register() {
   const [formData, setFormData] = useState<RegisterFormData>({

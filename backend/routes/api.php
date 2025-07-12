@@ -6,8 +6,9 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\NotificationController;
 
-Route::post('/logout', [AuthController::class, 'logout']);
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -25,15 +26,14 @@ Route::get('/popular-skaters', [ProfileController::class, 'popularSkaters']);
 Route::get('/profiles/{user:username}', [ProfileController::class, 'show']);
 
 
-
-
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
     // Thêm các route cần bảo vệ khác ở đây
 
+    Route::post('/logout', [AuthController::class, 'logout']);
+    
     Route::post('/posts/{post}/toggle-like', [PostController::class, 'toggleLike']);
     Route::post('/posts/{post}/toggle-save', [PostController::class, 'toggleSave']);
     Route::get('/profile/saved-posts', [ProfileController::class, 'savedPosts']);
@@ -45,4 +45,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
     Route::post('/comments/{comment}/replies', [CommentController::class, 'reply']);
 
+    Route::post('/profiles/{user:username}/follow', [ProfileController::class, 'follow']);
+    Route::delete('/profiles/{user:username}/unfollow', [ProfileController::class, 'unfollow']);
+    Route::get('/profile/following', [ProfileController::class, 'following']);
+    Route::get('/profile/followers', [ProfileController::class, 'followers']);
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
 });

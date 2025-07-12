@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import api from '@/lib/api';
 import { isAxiosError } from 'axios';
-import '../../styles/web.css';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');

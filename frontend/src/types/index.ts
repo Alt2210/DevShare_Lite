@@ -6,6 +6,9 @@ export interface User {
   name: string;
   username: string;
   email: string;
+  followers_count?: number;
+  following_count?: number;
+  is_followed_by_auth_user?: boolean;
 }
 
 // Định nghĩa cấu trúc cho đối tượng Tag

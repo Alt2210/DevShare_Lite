@@ -232,9 +232,9 @@ class PostController extends Controller
         $posts = Post::with(['user:id,name,username', 'tags:id,name'])
             ->select('posts.*')
             ->selectSub(
-                // Công thức tính điểm
+                // Công thức tính điểm mới, an toàn hơn
                 sprintf(
-                    '(COUNT(DISTINCT likes.id) * 1 + COUNT(DISTINCT comments.id) * 2 + COUNT(DISTINCT post_saves.id) * 3 - 1) / POW((TIMESTAMPDIFF(HOUR, posts.created_at, NOW()) + 2), %F)',
+                    '(COUNT(DISTINCT likes.id) * 1 + COUNT(DISTINCT comments.id) * 2 + COUNT(DISTINCT post_saves.id) * 3 - 1) / POW(((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(posts.created_at)) / 3600) + 2, %F)',
                     $gravity
                 ),
                 'trending_score'
@@ -243,13 +243,15 @@ class PostController extends Controller
             ->leftJoin('comments', 'posts.id', '=', 'comments.post_id')
             ->leftJoin('post_saves', 'posts.id', '=', 'post_saves.post_id')
             ->where('posts.status', 1)
-            ->where('posts.created_at', '>=', now()->subDays(7)) // Chỉ xét các bài trong 7 ngày gần nhất
-            ->groupBy('posts.id') // Phải group by tất cả các cột của posts
+            ->whereNotNull('posts.created_at') // Thêm điều kiện này để đảm bảo an toàn
+            ->where('posts.created_at', '>=', now()->subDays(7)) 
+            ->groupBy('posts.id') 
             ->orderBy('trending_score', 'desc')
             ->paginate(10);
         
         return response()->json($posts);
     }
+
 
     public function popular()
     {

@@ -1,8 +1,8 @@
 /* ==========================================================================
-   HEADER (TIÊU ĐỀ TRANG)
+   HEADER 
    ========================================================================== */
 
-/* Animation cho chấm thông báo */
+/* Animation for .notification*/
 @keyframes ping {
   75%, 100% {
     transform: scale(2);
@@ -19,7 +19,7 @@
 
 .dark .site-header {
   background-color: var(--dark-nav);
-  border-bottom: 1px solid #374151; /* gray-700 */
+  border-bottom: 1px solid #374151; 
 }
 
 .main-nav {
@@ -41,7 +41,7 @@
   display: flex;
   align-items: center;
 }
-/* Tạo khoảng cách giữa các phần tử */
+
 .auth-actions > * + * {
   margin-left: 1rem;
 }
@@ -53,7 +53,7 @@
   color: #d1d5db; /* gray-300 */
 }
 
-/* --- Khu vực thông báo --- */
+
 .notification-area {
   position: relative;
 }

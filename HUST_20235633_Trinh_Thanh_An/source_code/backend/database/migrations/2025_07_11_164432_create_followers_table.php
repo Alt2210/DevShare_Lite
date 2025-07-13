@@ -13,13 +13,9 @@ return new class extends Migration
     {
         Schema::create('followers', function (Blueprint $table) {
             $table->id();
-            // Người được theo dõi (followed user)
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            // Người đi theo dõi (follower)
             $table->foreignId('follower_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
-
-            // Đảm bảo mỗi cặp user_id và follower_id là duy nhất
             $table->unique(['user_id', 'follower_id']);
         });
     }
